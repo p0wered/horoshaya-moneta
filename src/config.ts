@@ -1,0 +1,45 @@
+const config = {
+  "http://localhost:5173": {
+    phoneNumber: "+7 (495) 003-35-89",
+    email: "info@tvoyzaym.ru",
+    address: "Свердловская обл., г. Екатеринбург, ул. Таганская, д. 79",
+    fullAddress:
+        "620057, Свердловская обл., г. Екатеринбург, ул. Таганская, д. 79, кв. 135",
+    legalEntity: "Лямин Михаил Геннадьевич",
+    rknNumber: "№ 66-23-027543",
+    order: "№ 179 от 08.12.2023",
+    inn: "272498589003",
+    individualEntrepreneurNumber: "323665800252102",
+    siteName: "Хорошая монета",
+    siteId: "13",
+    domain: "http://localhost:5173/",
+    shortName: "horoshaya-moneta",
+    files: {
+      publicOferta: "public_oferta.pdf",
+      personalDataPolitic: "personal_data_politic.pdf",
+      personalDataAgreement: "personal_data_agreement.pdf",
+      paidSubAgreement: "paid_sub_agreement.pdf",
+      recurrPaymentsAgreement: "recurr_payments_agreement.pdf",
+      cardDataAgreement: "card_data_agreement.pdf",
+      securityPolicy: "security_policy.pdf",
+    },
+    headText: "Получи первый онлайн займ",
+    headSubText: "С любой кредитной историей. Нужны только телефон и паспорт.",
+    source_data: [
+      "alliance",
+      "test_api",
+      "88ulun",
+      "pre_api",
+      "leads_api",
+      "guru_api",
+      "call_channel",
+      "leadsu",
+      "lg",
+      "guruleads",
+    ],
+    YM_ID: "66928696",
+    cid: "",
+  }
+};
+
+export default config;
