@@ -1,12 +1,67 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'tailwindcss';
 
-:root{
-  --primary: #f91e45;
-  --content-bg: #f4f7f9;
-  --content-black: #000000;
-  --content-white: #ffffff;
-  --content-grey: #beb6b4;
+@theme {
+  --color-white: #fff;
+  --color-black: #202224;
+  --color-black-void: #000;
+
+  --color-gray: #f4f7f9;
+  --color-gray-border: #c4c4c4;
+  --color-gray-dark: #272727;
+  --color-gray-checkbox: #B9C5CD;
+  --color-gray-border-dark: rgba(255, 255, 255, 0.2);
+  --color-gray-step: #e8e8e8;
+  --color-gray-text-dark: rgba(32, 34, 36, 0.7);
+
+  --color-red: #ff5454;
+  --color-red-light: #ff7549;
+  --color-red-subtle: #fef4f1;
+  --color-red-lightest: #FFF1F1;
+
+  --color-orange: #ff891d;
+
+  --color-yellow: #feba28;
+  --color-yellow-light: #ffecbb;
+  --color-yellow-subtle: rgba(255, 184, 0, 0.1);
+
+  --color-blue: #2f9bff;
+
+  --background-image-order-hero: url('/bg_order.jpg');
+  --background-image-separator-wave-sm: url('/separator_wave_sm.svg');
+  --background-image-separator-wave: url('/separator_wave.svg');
+  --background-image-application-bottom-left: url('/application__bottom_left.jpg');
+  --background-image-application-bottom-right: url('/application__bottom_right.jpg');
+  --background-image-login: url('/login/bg.jpg');
+
+  --height-order: 741px;
+  --container-xl: 1360px;
+  --font-family-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 12px;
+  --leading-xs: 130%;
+  --text-sm: 14px;
+  --leading-sm: 1.8;
+  --text-md: 18px;
+  --leading-md: 120%;
+  --text-l: 20px;
+  --leading-l: 120%;
+  --text-xl: 30px;
+  --text-2xl: 50px;
+  --text-3xl: 62px;
+  --leading-3xl: 68.2px;
+}
+
+@layer utilities {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  @media (min-width: 1360px) {
+    .container {
+      max-width: var(--container-xl);
+    }
+  }
 }
 
 * {
@@ -16,22 +71,12 @@
 html {
   height: 100%;
   scroll-behavior: smooth;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 600;
 }
 
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: var(--content-bg);
-}
-
-p, h1, h2, h3, h4 {
-  margin: 0;
-  padding: 0;
-}
-
-p{
-  font-size: 18px;
+  background-color: var(--color-gray);
+  font-family: var(--font-family-sans), sans-serif;
 }

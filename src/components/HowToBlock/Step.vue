@@ -10,8 +10,8 @@
           :title="title"
           class="mx-auto lg:mx-0"
       />
-      <h3 class="text-lg mt-7">{{ title }}</h3>
-      <p class="text-[16px] text-black text-opacity-50 mt-4">
+      <h3 class="text-l mt-7">{{ title }}</h3>
+      <p class="text-[16px] text-black/50 mt-4">
         <slot></slot>
       </p>
     </div>
@@ -19,8 +19,6 @@
 </template>
 
 <script lang="ts">
-//TODO настроить tailwind на более старую версию
-
 import {defineComponent} from "vue";
 
 export default defineComponent({
