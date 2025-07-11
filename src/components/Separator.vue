@@ -1,3 +1,15 @@
+<script setup lang="ts">
+type SeparatorSize = 'small' | 'default';
+
+interface Props {
+  size?: SeparatorSize;
+}
+
+withDefaults(defineProps<Props>(), {
+  size: 'default',
+});
+</script>
+
 <template>
   <div
       :class="{
@@ -8,34 +20,3 @@
     }"
   ></div>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-
-enum SeparatorSize {
-  Small = 'small',
-  Default = 'default',
-}
-
-export default defineComponent({
-  props: {
-    size: {
-      type: String as () => SeparatorSize,
-      default: SeparatorSize.Default,
-    },
-  },
-  setup(props) {
-    const separatorHeight = computed(() => {
-      if (props.size === SeparatorSize.Small) {
-        return 7;
-      }
-
-      return 10;
-    });
-
-    return {
-      separatorHeight,
-    };
-  },
-});
-</script>

@@ -1,3 +1,37 @@
+<script setup lang="ts">
+  import { ref } from 'vue';
+  import IconCardIconVisa from '@/assets/icons/card/IconVisa.vue';
+  import IconCardIconContact from '@/assets/icons/card/IconContact.vue';
+  import IconCardIconCorona from '@/assets/icons/card/IconCorona.vue';
+  import IconCardIconMastercard from '@/assets/icons/card/IconMastercard.vue';
+  import IconCardIconUmoney from '@/assets/icons/card/IconUmoney.vue';
+  import IconCardIconBankTransfer from '@/assets/icons/card/IconBankTransfer.vue';
+
+  import cardVisa from '@/assets/images/howto/card_visa_lg.png';
+  import cardContact from '@/assets/images/howto/card_contact_lg.png';
+  import cardCorona from '@/assets/images/howto/card_korona_lg.png';
+  import cardMastercard from '@/assets/images/howto/card_mc_lg.png';
+  import cardUmoney from '@/assets/images/howto/card_u_lg.png';
+  import cardBank from '@/assets/images/howto/card_bank_lg.png';
+
+  interface Card {
+    title: string;
+    iconComponent: any;
+    src: string;
+  }
+
+  const selectedCardIndex = ref(0);
+
+  const cards: Card[] = [
+    { title: 'Visa', iconComponent: IconCardIconVisa, src: cardVisa },
+    { title: 'Contact', iconComponent: IconCardIconContact, src: cardContact },
+    { title: 'Золотая корона', iconComponent: IconCardIconCorona, src: cardCorona },
+    { title: 'Mastercard', iconComponent: IconCardIconMastercard, src: cardMastercard },
+    { title: 'Юмани', iconComponent: IconCardIconUmoney, src: cardUmoney },
+    { title: 'Банковский перевод', iconComponent: IconCardIconBankTransfer, src: cardBank },
+  ];
+</script>
+
 <template>
   <div class="lg:flex gap-6 items-center">
     <ul class="flex flex-wrap lg:flex-col justify-around gap-2 lg:gap-6">
@@ -17,9 +51,7 @@
           {{ card.title }}
         </span>
 
-        <span v-if="selectedCardIndex === index" class="hidden lg:inline text-md absolute right-4 arrow">
-          &xrarr;
-        </span>
+        <span v-if="selectedCardIndex === index" class="hidden lg:inline text-md absolute right-4 arrow">&xrarr;</span>
       </li>
     </ul>
 
@@ -29,49 +61,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import IconCardVisa from '@/assets/icons/card/Visa.vue';
-import IconCardContact from '@/assets/icons/card/Contact.vue';
-import IconCardCorona from '@/assets/icons/card/Corona.vue';
-import IconCardMastercard from '@/assets/icons/card/Mastercard.vue';
-import IconCardUmoney from '@/assets/icons/card/Umoney.vue';
-import IconCardBankTransfer from '@/assets/icons/card/BankTransfer.vue';
-
-import cardVisa from '@/assets/images/howto/card_visa_lg.png';
-import cardContact from '@/assets/images/howto/card_contact_lg.png';
-import cardCorona from '@/assets/images/howto/card_korona_lg.png';
-import cardMastercard from '@/assets/images/howto/card_mc_lg.png';
-import cardUmoney from '@/assets/images/howto/card_u_lg.png';
-import cardBank from '@/assets/images/howto/card_bank_lg.png';
-
-interface Card {
-  title: string;
-  iconComponent: any;
-  src: string;
-}
-
-export default defineComponent({
-  setup() {
-    const selectedCardIndex = ref(0);
-
-    const cards: Card[] = [
-      { title: 'Visa', iconComponent: IconCardVisa, src: cardVisa },
-      { title: 'Contact', iconComponent: IconCardContact, src: cardContact },
-      { title: 'Золотая корона', iconComponent: IconCardCorona, src: cardCorona },
-      { title: 'Mastercard', iconComponent: IconCardMastercard, src: cardMastercard },
-      { title: 'Юмани', iconComponent: IconCardUmoney, src: cardUmoney },
-      { title: 'Банковский перевод', iconComponent: IconCardBankTransfer, src: cardBank },
-    ];
-
-    return {
-      selectedCardIndex,
-      cards,
-    };
-  },
-});
-</script>
 
 <style scoped>
 .is-selected {

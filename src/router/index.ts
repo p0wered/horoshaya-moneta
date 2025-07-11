@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import type { RouteRecordRaw } from 'vue-router'
-import config from "../config.ts";
+import { configProxy as config } from '@/config'
 import Anketa from "../views/Anketa.vue";
+import HomeView from "../views/HomeView.vue";
 
 const domain = window.location.origin;
 

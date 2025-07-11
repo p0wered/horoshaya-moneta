@@ -1,5 +1,28 @@
-# Vue 3 + TypeScript + Vite
+# хорошая-монета.рф
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Конфигурация
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+### Vue 3.5.17
+### Vite 7.0.3
+### TypeScript 5.8.3
+
+## Как работать с шаблоном?
+
+### Клонировать проект 
+```shell
+git clone ssh://git@git.infg.tech:10022/templates/horoshaya-moneta.git
+```
+
+### Установить модули 
+```shell
+npm install
+```
+
+### Запустить локально
+```shell
+npm run dev
+```
+
+#### Конфиг для dev подгружается локально из config.local.json
+#### Для build версии конфиг берётся по апи legal-data
+#### В Vue компонентах к конфигу обращаться через глобальную переменную $config

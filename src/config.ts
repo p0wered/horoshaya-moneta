@@ -1,45 +1,67 @@
-const config = {
-  "http://localhost:5173": {
-    phoneNumber: "+7 (495) 003-35-89",
-    email: "info@tvoyzaym.ru",
-    address: "Свердловская обл., г. Екатеринбург, ул. Таганская, д. 79",
-    fullAddress:
-        "620057, Свердловская обл., г. Екатеринбург, ул. Таганская, д. 79, кв. 135",
-    legalEntity: "Лямин Михаил Геннадьевич",
-    rknNumber: "№ 66-23-027543",
-    order: "№ 179 от 08.12.2023",
-    inn: "272498589003",
-    individualEntrepreneurNumber: "323665800252102",
-    siteName: "Хорошая монета",
-    siteId: "13",
-    domain: "http://localhost:5173/",
-    shortName: "horoshaya-moneta",
-    files: {
-      publicOferta: "public_oferta.pdf",
-      personalDataPolitic: "personal_data_politic.pdf",
-      personalDataAgreement: "personal_data_agreement.pdf",
-      paidSubAgreement: "paid_sub_agreement.pdf",
-      recurrPaymentsAgreement: "recurr_payments_agreement.pdf",
-      cardDataAgreement: "card_data_agreement.pdf",
-      securityPolicy: "security_policy.pdf",
-    },
-    headText: "Получи первый онлайн займ",
-    headSubText: "С любой кредитной историей. Нужны только телефон и паспорт.",
-    source_data: [
-      "alliance",
-      "test_api",
-      "88ulun",
-      "pre_api",
-      "leads_api",
-      "guru_api",
-      "call_channel",
-      "leadsu",
-      "lg",
-      "guruleads",
-    ],
-    YM_ID: "66928696",
-    cid: "",
-  }
-};
+import { reactive } from 'vue'
+import localConfig from '@/config.local.json'
 
-export default config;
+const configData = reactive<Record<string, any>>({});
+let loaded = false;
+let loading: Promise<void> | null = null;
+
+export function getTid(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  const urlTid = params.get('tid');
+
+  if (urlTid) {
+    document.cookie = `tid=${encodeURIComponent(urlTid)}; path=/; max-age=${30 * 24 * 60 * 60}`;
+    return urlTid;
+  }
+
+  const cookieMatch = document.cookie.match(/(?:^|; )tid=([^;]+)/);
+  if (cookieMatch) {
+    try {
+      return decodeURIComponent(cookieMatch[1])
+    } catch (e) {
+      console.warn('Не удалось декодировать tid из куки:', e);
+    }
+  }
+
+  return null
+}
+
+export function loadConfig(): Promise<void> {
+  if (loaded) return Promise.resolve();
+
+  // для dev берёт локальный конфиг
+  if (import.meta.env.DEV) {
+    Object.assign(configData, localConfig);
+    loaded = true;
+    return Promise.resolve();
+  }
+
+  // для build использует апи конфиг
+  if (!loading) {
+    const tid = getTid();
+    const url = new URL('/api/legal-data', window.location.origin);
+    if (tid) url.searchParams.set('tid', tid);
+
+    loading = fetch(url.toString())
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then(json => {
+          Object.assign(configData, json);
+          loaded = true;
+        })
+        .catch(err => console.error('Ошибка загрузки config:', err));
+  }
+
+  return loading!
+}
+
+export const configProxy = new Proxy(reactive(configData), {
+  get(target, domain: string) {
+    if (!loaded) console.warn(`⚠️ Config для "${domain}" ещё не загружен!`);
+    return Reflect.get(target, domain) ?? {}
+  }
+})
+
+export type ConfigProxyType = typeof configProxy

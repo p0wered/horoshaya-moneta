@@ -1,3 +1,13 @@
+<script setup lang="ts">
+  interface Props {
+    step?: number;
+    title?: string;
+    imageUrl?: string;
+  }
+
+  defineProps<Props>();
+</script>
+
 <template>
   <div class="md:flex lg:items-center relative">
     <div class="text-orange text-[33px] font-bold absolute md:relative">
@@ -17,15 +27,3 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import {defineComponent} from "vue";
-
-export default defineComponent({
-  props: {
-    step: Number,
-    title: String,
-    imageUrl: String,
-  },
-});
-</script>
