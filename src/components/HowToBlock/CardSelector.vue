@@ -64,13 +64,7 @@
 
 <style scoped>
 .is-selected {
-  box-shadow:
-  0 27px 65px rgba(0, 0, 0, 0.03),
-  0 18px 38px rgba(0, 0, 0, 0.0227778),
-  0 10px 21px rgba(0, 0, 0, 0.0182222),
-  0 5px  11px rgba(0, 0, 0, 0.015),
-  0 2px  5px  rgba(0, 0, 0, 0.0117778),
-  0 1px  3px  rgba(0, 0, 0, 0.00722222);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
 }
 
 .arrow {

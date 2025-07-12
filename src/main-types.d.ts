@@ -1,10 +1,6 @@
-import type { ConfigProxyType } from './config'
+import type { ConfigProxyType } from './config';
 
-declare module 'vue-slide-up-down' {
-    import { defineComponent } from 'vue';
-    const SlideUpDown: ReturnType<typeof defineComponent>;
-    export default SlideUpDown;
-}
+declare module 'vue-slide-up-down';
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {

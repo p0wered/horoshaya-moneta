@@ -10,7 +10,7 @@
 
 <template>
   <div class="md:flex lg:items-center relative">
-    <div class="text-orange text-[33px] font-bold absolute md:relative">
+    <div class="text-red text-[33px] font-bold absolute md:relative">
       {{ step }}
     </div>
     <div class="md:pl-9 text-center flex-grow lg:text-left">

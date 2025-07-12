@@ -5,7 +5,6 @@
   --color-white: #fff;
   --color-black: #202224;
   --color-black-void: #000;
-
   --color-gray: #f4f7f9;
   --color-gray-border: #c4c4c4;
   --color-gray-dark: #272727;
@@ -13,26 +12,21 @@
   --color-gray-border-dark: rgba(255, 255, 255, 0.2);
   --color-gray-step: #e8e8e8;
   --color-gray-text-dark: rgba(32, 34, 36, 0.7);
-
-  --color-red: #ff5454;
-  --color-red-light: #ff7549;
+  --color-red: #f91e45;
+  --color-red-light: #f43c3c;
   --color-red-subtle: #fef4f1;
   --color-red-lightest: #FFF1F1;
-
   --color-orange: #ff891d;
-
   --color-yellow: #feba28;
   --color-yellow-light: #ffecbb;
   --color-yellow-subtle: rgba(255, 184, 0, 0.1);
-
   --color-blue: #2f9bff;
 
-  --background-image-order-hero: url('/bg_order.jpg');
-  --background-image-separator-wave-sm: url('/separator_wave_sm.svg');
-  --background-image-separator-wave: url('/separator_wave.svg');
-  --background-image-application-bottom-left: url('/application__bottom_left.jpg');
-  --background-image-application-bottom-right: url('/application__bottom_right.jpg');
-  --background-image-login: url('/login/bg.jpg');
+  --background-image-order-hero: url('../assets/images/bg_order.jpg');
+  --background-image-separator-wave-sm: url('../assets/images/separator_wave_sm.svg');
+  --background-image-separator-wave: url('../assets/images/separator_wave.svg');
+  --background-image-application-bottom-left: url('../assets/images/application__bottom_left.jpg');
+  --background-image-application-bottom-right: url('../assets/images/application__bottom_right.jpg');
 
   --height-order: 741px;
   --container-xl: 1360px;

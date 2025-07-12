@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import ApplyFooterSection from "@/components/FooterHome/ApplyFooterSection.vue";
   import CreditorsList from "@/components/FooterHome/CreditorsList.vue";
+  import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
+  import IconFooterMasterCard from "@/assets/icons/IconFooterMasterCard.vue";
+  import IconFooterMir from "@/assets/icons/IconFooterMir.vue";
 
   const domain = window.location.origin;
 </script>
@@ -9,15 +12,16 @@
   <div class="bg-black-void">
     <div class="container ">
       <footer class="mx-auto px-5 md:px-20 text-white">
+
         <section class="
-        flex
-        justify-center
-        items-center
-        border-b border-gray-dark
-        py-10
-        flex-col-reverse
-        md:flex-row
-        gap-8"
+          flex
+          justify-center
+          items-center
+          border-b border-gray-dark
+          py-10
+          flex-col-reverse
+          md:flex-row
+          gap-8"
         >
           <div class="flex gap-4 flex-wrap justify-between">
             <button
@@ -29,28 +33,39 @@
           </div>
         </section>
 
-        <section
-            class="
-        flex
-        justify-between
-        items-center
-        border-b border-gray-dark
-        py-10
-        flex-col
-        md:flex-row
-        gap-6
+        <section class="flex justify-between max-w-4xl m-auto mt-8">
+          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+            <IconFooterVisa/>
+          </div>
+          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+            <IconFooterMasterCard/>
+          </div>
+          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+            <IconFooterMir/>
+          </div>
+        </section>
+
+        <section class="
+          flex
+          justify-between
+          items-center
+          border-b border-gray-dark
+          py-10
+          flex-col
+          md:flex-row
+          gap-6
       "
         >
           <div class="text-center md:text-left">
             <p class="text-sm text-white/50">Телефон для связи</p>
             <a
-                href="tel:88009999999"
-                class="
-            mt-2
-            text-[22px]
-            bg-clip-text
-            text-transparent
-            bg-gradient-to-b
+              href="tel:88009999999"
+              class="
+              mt-2
+              text-[22px]
+              bg-clip-text
+              text-transparent
+              bg-gradient-to-b
             from-red
             to-red-light
           ">{{ $config[domain].phoneNumber }}</a>
@@ -59,15 +74,15 @@
           <div class="text-center md:text-right">
             <p class="text-sm text-white/50 md:text-left">E-mail</p>
             <a
-                href="mailto:horoshenkayamoneta@yandex.ru"
-                class="
-            mt-2
-            text-[22px]
-            bg-clip-text
-            text-transparent
-            bg-gradient-to-b
-            from-red
-            to-red-light
+              href="mailto:horoshenkayamoneta@yandex.ru"
+              class="
+              mt-2
+              text-[22px]
+              bg-clip-text
+              text-transparent
+              bg-gradient-to-b
+              from-red
+              to-red-light
           "
             >{{ $config[domain].email }}</a
             >
@@ -189,17 +204,38 @@
             <ul class="doc-links text-xs leading-6">
               <li>
                 <a
-                    href="/docs/personal-agreement"
-                    target="_blank"
-                    class="text-red-light"
-                >Согласие на обработку персональных данных</a
-                >
+                  href="/docs/personal-agreement"
+                  target="_blank"
+                  class="text-red">
+                  Согласие на обработку персональных данных
+                </a>
               </li>
 
               <li>
-                <a href="/docs/ad-agreement" target="_blank" class="text-red-light"
-                >Согласие на получение рекламных материалов</a
-                >
+                <a
+                  href="/docs/ad-agreement"
+                  target="_blank"
+                  class="text-red">
+                  Соглашение о хранении учётных данных владельца карты
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/docs/ad-agreement"
+                  target="_blank"
+                  class="text-red">
+                  Соглашение на применение Рекуррентных платежей
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/docs/ad-agreement"
+                  target="_blank"
+                  class="text-red">
+                  Соглашение на оформление платной подписки
+                </a>
               </li>
             </ul>
           </ApplyFooterSection>
@@ -213,43 +249,20 @@
 
             <ul class="doc-links text-xs leading-6">
               <li>
-                <a href="/docs/pricing" target="_blank" class="text-red-light">
-                  Тарифы сервиса
+                <a
+                  href="/docs/pricing"
+                  target="_blank"
+                  class="text-red">
+                  Политикой обработки персональных данных
                 </a>
               </li>
 
               <li>
-                <a href="/docs/public-oferta" target="_blank" class="text-red-light"
-                >Договором публичной оферты</a>
-              </li>
-
-              <li>
-                <a href="/docs/particular-reservation" target="_blank" class="text-red-light">
-                  Оговоркой на частность
-                </a>
-              </li>
-
-              <li>
-                <a href="/docs/personal-agreement" target="_blank" class="text-red-light">
-                  Положением об обработке и защите персональных данных
-                </a>
-              </li>
-
-              <li>
-                <a href="/docs/recurrent-agreement" target="_blank" class="text-red-light">
-                  Соглашение о рекуррентых платежах
-                </a>
-              </li>
-
-              <li>
-                <a href="/docs/return-policy" target="_blank" class="text-red-light">
-                  Политика возвратов платежей
-                </a>
-              </li>
-
-              <li>
-                <a href="/docs/safety-policy" target="_blank" class="text-red-light">
-                  Политика безопасности
+                <a
+                  href="/docs/pricing"
+                  target="_blank"
+                  class="text-red">
+                  Договором публичной оферты
                 </a>
               </li>
             </ul>

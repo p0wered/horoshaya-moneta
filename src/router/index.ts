@@ -1,38 +1,37 @@
-import { createRouter, createWebHistory } from "vue-router";
-import type { RouteRecordRaw } from 'vue-router'
-import { configProxy as config } from '@/config'
-import Anketa from "../views/Anketa.vue";
-import HomeView from "../views/HomeView.vue";
+import type {RouteRecordRaw} from "vue-router";
+import {createRouter, createWebHistory} from 'vue-router'
+import {configProxy as config, loadConfig} from '@/config'
+import HomeView from '@/views/HomeView.vue'
+import Anketa from '@/views/Anketa.vue'
 
-const domain = window.location.origin;
-
-const routes : RouteRecordRaw[] = [
+const routes: RouteRecordRaw[] = [
     {
-        path: "/",
-        component: HomeView,
+        path: '/',
         name: 'HomeView',
-        meta: {
-            title: `${config[domain].siteName} — мгновенные онлайн займы на карту. Персональный подбор займов`,
-        },
+        component: HomeView,
+        meta: { titleKey: '/' },
     },
     {
-        path: "/anketa",
-        component: Anketa,
+        path: '/apply',
         name: 'Anketa',
-        meta: {
-            title: `${config[domain].siteName} — мгновенные онлайн займы на карту. Персональный подбор займов`,
-        },
-    }
-];
+        component: Anketa,
+        meta: { titleKey: '/apply' },
+    },
+]
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-});
+})
 
-router.beforeEach((to, from, next) => {
-    document.title = to.meta.title;
-    next();
-});
+router.beforeEach(async (to, _from, next) => {
+    await loadConfig()
+    const domain = window.location.origin
+    const titlesMap = config[domain]?.titles as Record<string, string> | undefined
+    const key = (to.meta.titleKey as string) ?? to.path
+    document.title = titlesMap?.[key]
+        ?? 'Займы онлайн'
+    next()
+})
 
-export default router;
+export default router

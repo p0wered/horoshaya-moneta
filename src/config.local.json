@@ -23,6 +23,10 @@
       "cardDataAgreement": "card_data_agreement.pdf",
       "securityPolicy": "security_policy.pdf"
     },
+    "titles": {
+      "/": "Нужен займ?",
+      "/apply": "Хорошая монета - онлайн займы на карту"
+    },
     "headText": "Получи первый онлайн займ",
     "headSubText": "С любой кредитной историей. Нужны только телефон и паспорт.",
     "source_data": [
