@@ -1,6 +1,6 @@
 import { computed, watch, onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
-import { getCookie, setCookie } from './cookie'
+import { getCookie, setCookie } from './common.ts'
 
 /**
  * Определяет, есть ли utm_source в query параметрах или cookie и записывает

@@ -3,6 +3,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import {configProxy as config, loadConfig} from '@/config'
 import HomeView from '@/views/HomeView.vue'
 import Anketa from '@/views/Anketa.vue'
+import Companys from "@/views/Companys.vue";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -17,6 +18,12 @@ const routes: RouteRecordRaw[] = [
         component: Anketa,
         meta: { titleKey: '/apply' },
     },
+    {
+        path: '/apply/companys',
+        name: 'Companys',
+        component: Companys,
+        meta: { titleKey: '/apply/companys' },
+    },
 ]
 
 const router = createRouter({
@@ -30,7 +37,7 @@ router.beforeEach(async (to, _from, next) => {
     const titlesMap = config[domain]?.titles as Record<string, string> | undefined
     const key = (to.meta.titleKey as string) ?? to.path
     document.title = titlesMap?.[key]
-        ?? 'Займы онлайн'
+        ?? 'Нужен займ?'
     next()
 })
 

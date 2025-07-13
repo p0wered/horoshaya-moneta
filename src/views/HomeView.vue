@@ -12,18 +12,16 @@
 <template>
   <main class="xl:pt-8">
     <section
-      class="
-        hero__container
-        bg-white
-        mx-auto
-        text-black
-        z-10
-        relative
-        overflow-hidden
-        xl:container
-        xl:rounded-3xl
-        rounded-none
-      "
+      class="hero__container
+      bg-white
+      mx-auto
+      text-black
+      z-10
+      relative
+      overflow-hidden
+      xl:container
+      xl:rounded-3xl
+      rounded-none"
     >
       <div class="flex flex-wrap lg:flex-nowrap">
         <div
@@ -55,7 +53,7 @@
         </div>
 
         <div class="order-form__wrapper w-full">
-          <LoanCalculator />
+          <LoanCalculator :small="false"/>
         </div>
       </div>
 
@@ -72,6 +70,19 @@
 
     <FaqBlock class="bg-gray pt-10 md:pt-20 px-5 md:px-20 mb-16 md:mb-40" />
 
+    <section class="application__bottom-wrapper mx-auto bg-yellow py-12 px-3 md:px-12">
+      <div class="application__bottom max-w-[500px] mx-auto bg-white md:py-10 py-6 px-3 rounded-3xl text-center">
+        <h3 class="text-[24px] md:text-xl font-medium">Заполните анкету</h3>
+        <p class="text-md text-black/50 mt-2">И получите индивидуальное предложение</p>
+
+        <LoanCalculator :small="true"/>
+
+        <p class="text-xs text-black/50 md:mt-5 mt-2">
+          Все данные надежно защищены:<br />защищенное соединение
+        </p>
+      </div>
+    </section>
+
     <FooterHome/>
   </main>
 </template>
@@ -83,11 +94,12 @@
 
   @media (min-width: 1196px) {
     .application__bottom-wrapper {
-      background:
+      background-color: var(--color-red);
+      background-image:
         url('../assets/images/application__bottom_left.jpg'),
-        url('../assets/images/application__bottom_right.jpg'),
-        #feba28;
-      background: no-repeat, no-repeat, no-repeat left, right;
+        url('../assets/images/application__bottom_right.jpg');
+      background-repeat: no-repeat;
+      background-position: left center, right center;
     }
   }
 </style>

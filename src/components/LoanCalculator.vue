@@ -1,71 +1,87 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { addDays, addMonths, addYears } from 'date-fns';
-import { formatCurrency, formatDate, formatLoanPeriod, mapSliderValueToPeriod } from '@/utils/format';
-import { createDefaultCalculations, saveCalculations } from '@/utils/session';
-import { useUtmSource } from '@/utils/utm.ts';
+  import { computed, ref, watch } from 'vue';
+  import { addDays, addMonths, addYears } from 'date-fns';
+  import { formatCurrency, formatDate, formatLoanPeriod, mapSliderValueToPeriod } from '@/utils/format';
+  import { createDefaultCalculations, saveCalculations } from '@/utils/session';
+  import { useUtmSource } from '@/utils/utm.ts';
 
-import ButtonRounded from "@/components/Common/Button/ButtonRounded.vue";
-import ButtonPrimary from "@/components/Common/Button/ButtonPrimary.vue";
-import Separator from "@/components/Separator.vue";
-import Slider from '@/components/Slider.vue';
+  import ButtonPrimary from "@/components/Common/Button/ButtonPrimary.vue";
+  import Separator from "@/components/Separator.vue";
+  import Slider from '@/components/Slider.vue';
+  import ButtonRounded from "@/components/Common/Button/ButtonRounded.vue";
 
-const { amount, period } = createDefaultCalculations();
-const { hasUtmSource } = useUtmSource();
+  withDefaults(
+      defineProps<{
+        small?: boolean
+      }>(),
+      {
+        small: false,
+      }
+  );
 
-const loanAmount = ref(amount);
-const loanPeriod = ref(period);
+  const { amount, period } = createDefaultCalculations();
+  const { hasUtmSource } = useUtmSource();
 
-const isWeeksPeriod = computed(() => loanAmount.value >= 50000);
+  const loanAmount = ref(amount);
+  const loanPeriod = ref(period);
 
-const LOAN_PERIOD_SLIDER_MIN = 1;
-const LOAN_PERIOD_SLIDER_MAX = 42;
+  const isWeeksPeriod = computed(() => loanAmount.value >= 50000);
 
-const loanAmountFormatted = computed(() =>
-    formatCurrency(loanAmount.value)
-);
+  const LOAN_PERIOD_SLIDER_MIN = 1;
+  const LOAN_PERIOD_SLIDER_MAX = 42;
 
-const loanPeriodFormatted = computed(() => {
-  return formatLoanPeriod(loanPeriod.value);
-});
+  const loanAmountFormatted = computed(() =>
+      formatCurrency(loanAmount.value)
+  );
 
-const dueDateFormatted = computed(() => {
-  const now = new Date();
-  let calculatedDueDate: Date;
+  const loanPeriodFormatted = computed(() => {
+    return formatLoanPeriod(loanPeriod.value);
+  });
 
-  const { unit, value } = mapSliderValueToPeriod(loanPeriod.value);
+  const dueDateFormatted = computed(() => {
+    const now = new Date();
+    let calculatedDueDate: Date;
 
-  switch (unit) {
-    case 'day':
-      calculatedDueDate = addDays(now, value);
-      break;
-    case 'month':
-      calculatedDueDate = addMonths(now, value);
-      break;
-    case 'year':
-      calculatedDueDate = addYears(now, value);
-      break;
-    default:
-      calculatedDueDate = now;
-  }
+    const { unit, value } = mapSliderValueToPeriod(loanPeriod.value);
 
-  return formatDate(calculatedDueDate, 'd MMMM yyyy');
-});
+    switch (unit) {
+      case 'day':
+        calculatedDueDate = addDays(now, value);
+        break;
+      case 'month':
+        calculatedDueDate = addMonths(now, value);
+        break;
+      case 'year':
+        calculatedDueDate = addYears(now, value);
+        break;
+      default:
+        calculatedDueDate = now;
+    }
 
-const updateSavedCalculations = () => {
-  saveCalculations(loanAmount.value, loanPeriod.value, isWeeksPeriod.value);
-};
+    return formatDate(calculatedDueDate, 'd MMMM yyyy');
+  });
 
-watch([loanAmount, loanPeriod], () => {
-  updateSavedCalculations();
-}, { immediate: true });
+  const updateSavedCalculations = () => {
+    saveCalculations(loanAmount.value, loanPeriod.value, isWeeksPeriod.value);
+  };
+
+  watch([loanAmount, loanPeriod], () => {
+    updateSavedCalculations();
+  }, { immediate: true });
 </script>
 
 <template>
   <section>
-    <div class="p-6 md:p-[50px] md:pl-[80px]">
-      <h2 class="text-xl">Нужен займ?</h2>
-      <p class="mt-4 text-md">Получи первый займ прямо сейчас на карту</p>
+    <div :class="{
+      'p-8': !small,
+      'md:p-[50px]': !small,
+      'md:pl-[80px]': !small,
+      'p-2': small,
+      'md:p-6': small,
+      }"
+    >
+      <h2 v-if="!small" class="text-xl">Нужен займ?</h2>
+      <p v-if="!small" class="mt-4 text-md">Получи первый займ прямо сейчас на карту</p>
 
       <div>
         <Slider
@@ -90,29 +106,34 @@ watch([loanAmount, loanPeriod], () => {
         </Slider>
       </div>
 
-      <ButtonPrimary class="w-full mt-10 rounded-lg">
+      <ButtonPrimary :class="{
+        'w-full': true,
+        'mt-10': true,
+        'rounded-lg': !small,
+        'rounded-full': small
+      }">
         Оформить заявку
       </ButtonPrimary>
 
       <div
-          class="
-          bg-red-subtle
-          text-sm text-center
-          py-4
-          pt-5
-          px-2
-          rounded-b-3xl
-          -mt-1
-          whitespace-normal
-        "
-      >
+        v-if="!small"
+        class="
+        bg-red-subtle
+        text-sm text-center
+        py-4
+        pt-5
+        px-2
+        rounded-b-3xl
+        -mt-1
+        whitespace-normal
+        ">
         <span class="text-red font-bold">Акция:</span>
         займ до 50 000 для новых клиентов
       </div>
 
-      <Separator size="small" class="mt-7" />
+      <Separator v-if="!small" size="small" class="mt-7" />
 
-      <div class="mt-7 sm:flex justify-between">
+      <div v-if="!small" class="mt-7 sm:flex justify-between">
         <div class="flex justify-between items-baseline sm:block">
           <span class="sm:block text-black sm:text-black/50 sm:text-sm text-md">
             Вы берете
@@ -135,7 +156,7 @@ watch([loanAmount, loanPeriod], () => {
         </div>
       </div>
 
-      <div class="mt-10 text-center text-black/50 text-[12px]">
+      <div v-if="!small" class="mt-10 text-center text-black/50 text-[12px]">
         <p>
           Сервис осуществляет подбор микрозаймов между лицом, желающим оформить займ, и кредитными учреждениями
         </p>
@@ -145,9 +166,7 @@ watch([loanAmount, loanPeriod], () => {
       </div>
     </div>
 
-    <div
-        class="bg-red py-6 flex justify-center items-center px-4"
-    >
+    <div v-if="!small" class="bg-red py-6 flex justify-center items-center px-4">
       <div class="flex items-center space-x-6">
         <div>
           <span class="block text-md text-white font-bold">

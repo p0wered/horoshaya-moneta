@@ -17,6 +17,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "src/main-types.d.ts"
+    "src/global-types.d.ts"
   ]
 }

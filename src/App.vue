@@ -1,5 +1,7 @@
 <script setup lang="ts">
+  import {useInactivityTimer} from "@/utils/common.ts";
 
+  useInactivityTimer();
 </script>
 
 <template>
@@ -7,7 +9,3 @@
     <RouterView/>
   </main>
 </template>
-
-<style scoped>
-
-</style>

@@ -7,3 +7,11 @@ declare module '@vue/runtime-core' {
         $config: ConfigProxyType
     }
 }
+
+declare global {
+    interface Window {
+        ym?(counterId: number, eventName: 'reachGoal', targetName: string): void;
+    }
+}
+
+export {};

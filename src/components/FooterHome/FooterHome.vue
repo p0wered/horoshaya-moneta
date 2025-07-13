@@ -4,6 +4,7 @@
   import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
   import IconFooterMasterCard from "@/assets/icons/IconFooterMasterCard.vue";
   import IconFooterMir from "@/assets/icons/IconFooterMir.vue";
+  import router from "@/router";
 
   const domain = window.location.origin;
 </script>
@@ -25,8 +26,8 @@
         >
           <div class="flex gap-4 flex-wrap justify-between">
             <button
-                class="border border-gray-border-dark rounded-lg px-3 sm:px-7 py-3 text-sm"
-                @click=""
+                class="border border-gray-border-dark rounded-lg px-3 sm:px-7 py-3 text-sm cursor-pointer"
+                @click="router.push('/unsubscribe')"
             >
               Отписаться от услуг
             </button>
@@ -59,7 +60,7 @@
           <div class="text-center md:text-left">
             <p class="text-sm text-white/50">Телефон для связи</p>
             <a
-              href="tel:88009999999"
+              :href="`tel:${$config[domain].phoneNumber}`"
               class="
               mt-2
               text-[22px]
@@ -74,7 +75,7 @@
           <div class="text-center md:text-right">
             <p class="text-sm text-white/50 md:text-left">E-mail</p>
             <a
-              href="mailto:horoshenkayamoneta@yandex.ru"
+              :href="`mailto:${$config[domain].email}`"
               class="
               mt-2
               text-[22px]
@@ -83,9 +84,7 @@
               bg-gradient-to-b
               from-red
               to-red-light
-          "
-            >{{ $config[domain].email }}</a
-            >
+          ">{{ $config[domain].email }}</a>
           </div>
         </section>
 
