@@ -4,6 +4,7 @@ import {configProxy as config, loadConfig} from '@/config'
 import HomeView from '@/views/HomeView.vue'
 import Anketa from '@/views/Anketa.vue'
 import Companys from "@/views/Companys.vue";
+import Unsubscribe from "@/views/Unsubscribe.vue";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -23,6 +24,12 @@ const routes: RouteRecordRaw[] = [
         name: 'Companys',
         component: Companys,
         meta: { titleKey: '/apply/companys' },
+    },
+    {
+        path: '/unsubscribe',
+        name: 'Unsubscribe',
+        component: Unsubscribe,
+        meta: { titleKey: '/unsubscribe' },
     },
 ]
 

@@ -13,6 +13,7 @@
   --color-gray-step: #e8e8e8;
   --color-gray-text-dark: rgba(32, 34, 36, 0.7);
   --color-red: #f91e45;
+  --color-red-dark: #da1537;
   --color-red-light: #f43c3c;
   --color-red-subtle: #fef4f1;
   --color-red-lightest: #FFF1F1;
@@ -56,6 +57,16 @@
       max-width: var(--container-xl);
     }
   }
+}
+
+::selection {
+  background: var(--color-red);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--color-red);
+  color: white;
 }
 
 * {

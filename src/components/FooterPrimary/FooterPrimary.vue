@@ -1,16 +1,40 @@
 <script setup lang="ts">
-  import ApplyFooterSection from "@/components/FooterHome/ApplyFooterSection.vue";
-  import CreditorsList from "@/components/FooterHome/CreditorsList.vue";
+  import { configProxy } from '@/config';
+  import ApplyFooterSection from "@/components/FooterPrimary/ApplyFooterSection.vue";
+  import CreditorsList from "@/components/FooterPrimary/CreditorsList.vue";
   import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
   import IconFooterMasterCard from "@/assets/icons/IconFooterMasterCard.vue";
   import IconFooterMir from "@/assets/icons/IconFooterMir.vue";
-  import router from "@/router";
 
   const domain = window.location.origin;
+
+  interface DocumentItem {
+    slug: string;
+    pdf_path: string;
+  }
+
+  interface DocumentMap {
+    [key: string]: string | null;
+  }
+
+  const domainConfig = configProxy[domain];
+  const documents: DocumentItem[] = domainConfig?.documents || [];
+
+  const documentMap: DocumentMap = documents.reduce((acc: DocumentMap, doc: DocumentItem) => {
+    acc[doc.slug] = doc.pdf_path;
+    return acc;
+  }, {});
+
+  const publicOfertaPdf = documentMap.offerta || null;
+  const personalDataPoliticPdf = documentMap.politics_obrab || null;
+  const personalDataAgreementPdf = documentMap.sogl_obrab || null;
+  const paidSubAgreementPdf = documentMap.sogl_podpiska || null;
+  const recurrPaymentsAgreementPdf = documentMap.recurr_payments_agreement || null;
+  const cardDataAgreementPdf = documentMap.card_data_agreement || null;
 </script>
 
 <template>
-  <div class="bg-black-void">
+  <footer class="bg-black-void">
     <div class="container ">
       <footer class="mx-auto px-5 md:px-20 text-white">
 
@@ -25,12 +49,17 @@
           gap-8"
         >
           <div class="flex gap-4 flex-wrap justify-between">
-            <button
-                class="border border-gray-border-dark rounded-lg px-3 sm:px-7 py-3 text-sm cursor-pointer"
-                @click="router.push('/unsubscribe')"
-            >
+            <a class="
+                border border-gray-border-dark
+                rounded-lg
+                px-3 sm:px-7 py-3
+                text-sm cursor-pointer
+                hover:bg-neutral-800
+                transition
+              "
+              href="/unsubscribe">
               Отписаться от услуг
-            </button>
+            </a>
           </div>
         </section>
 
@@ -203,7 +232,8 @@
             <ul class="doc-links text-xs leading-6">
               <li>
                 <a
-                  href="/docs/personal-agreement"
+                  :href="personalDataAgreementPdf"
+                  v-if="personalDataAgreementPdf"
                   target="_blank"
                   class="text-red">
                   Согласие на обработку персональных данных
@@ -212,7 +242,8 @@
 
               <li>
                 <a
-                  href="/docs/ad-agreement"
+                  :href="cardDataAgreementPdf"
+                  v-if="cardDataAgreementPdf"
                   target="_blank"
                   class="text-red">
                   Соглашение о хранении учётных данных владельца карты
@@ -221,7 +252,8 @@
 
               <li>
                 <a
-                  href="/docs/ad-agreement"
+                  :href="recurrPaymentsAgreementPdf"
+                  v-if="recurrPaymentsAgreementPdf"
                   target="_blank"
                   class="text-red">
                   Соглашение на применение Рекуррентных платежей
@@ -230,7 +262,8 @@
 
               <li>
                 <a
-                  href="/docs/ad-agreement"
+                  :href="paidSubAgreementPdf"
+                  v-if="paidSubAgreementPdf"
                   target="_blank"
                   class="text-red">
                   Соглашение на оформление платной подписки
@@ -249,7 +282,8 @@
             <ul class="doc-links text-xs leading-6">
               <li>
                 <a
-                  href="/docs/pricing"
+                  :href="personalDataPoliticPdf"
+                  v-if="personalDataPoliticPdf"
                   target="_blank"
                   class="text-red">
                   Политикой обработки персональных данных
@@ -258,7 +292,8 @@
 
               <li>
                 <a
-                  href="/docs/pricing"
+                  v-if="publicOfertaPdf"
+                  :href="publicOfertaPdf"
                   target="_blank"
                   class="text-red">
                   Договором публичной оферты
@@ -269,5 +304,5 @@
         </section>
       </footer>
     </div>
-  </div>
+  </footer>
 </template>

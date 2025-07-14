@@ -26,7 +26,7 @@ export const setCookie = (name: string, value: string, days = 30) => {
  */
 export const sendMetrika = (action: string) => {
     if (typeof window !== 'undefined' && typeof window.ym !== 'undefined') {
-        if (import.meta.env.DEV) {
+        if (!import.meta.env.DEV) {
             window.ym(93770064, 'reachGoal', action);
         } else {
             console.log('sendMetrika', action);
@@ -74,4 +74,24 @@ export function useInactivityTimer(timeoutMs = 15 * 60 * 1000) {
 
     onMounted(resetTimer);
     onUnmounted(stopTimer);
+}
+
+/**
+ * Записывает query параметры sub1-sub7, web_id, click_id в cookie
+ */
+export const saveQueryToCookie = () => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const keys = [
+        'sub1','sub2','sub3','sub4','sub5','sub6','sub7',
+        'web_id','click_id'
+    ];
+
+    keys.forEach(key => {
+        const val = params.get(key);
+        if (val && val.trim() !== '') {
+            setCookie(key, val);
+        }
+    })
 }

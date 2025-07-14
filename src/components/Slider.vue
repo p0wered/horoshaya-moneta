@@ -61,7 +61,17 @@
       </div>
     </div>
 
-    <div id="slider" ref="slider" class="mt-6"></div>
+    <div id="slider" ref="slider" class="mt-6"/>
+
+    <div class="w-full flex justify-between mt-4">
+      <p>
+        {{ props.min }} {{label === 'Сумма' ? '₽' : 'день'}}
+      </p>
+      <p>
+        {{ label === 'Сумма' ? props.max : '365'}}
+        {{ label === 'Сумма' ? '₽' : 'дней' }}
+      </p>
+    </div>
   </div>
 </template>
 

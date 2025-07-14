@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",
+    "axios": "^1.10.0",
     "date-fns": "^4.1.0",
     "lodash": "^4.17.21",
     "nouislider": "^15.8.1",
@@ -22,6 +23,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.0.13",
+    "@types/vue-the-mask": "^0.11.5",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/tsconfig": "^0.7.0",
     "sass-embedded": "^1.89.2",

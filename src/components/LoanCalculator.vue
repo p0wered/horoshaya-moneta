@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
+  import { useRouter, useRoute } from "vue-router";
   import { addDays, addMonths, addYears } from 'date-fns';
   import { formatCurrency, formatDate, formatLoanPeriod, mapSliderValueToPeriod } from '@/utils/format';
   import { createDefaultCalculations, saveCalculations } from '@/utils/session';
   import { useUtmSource } from '@/utils/utm.ts';
 
-  import ButtonPrimary from "@/components/Common/Button/ButtonPrimary.vue";
+  import ButtonGradient from "@/components/Common/Button/ButtonGradient.vue";
   import Separator from "@/components/Separator.vue";
   import Slider from '@/components/Slider.vue';
   import ButtonRounded from "@/components/Common/Button/ButtonRounded.vue";
@@ -19,6 +20,9 @@
       }
   );
 
+  const router = useRouter();
+  const route = useRoute();
+
   const { amount, period } = createDefaultCalculations();
   const { hasUtmSource } = useUtmSource();
 
@@ -29,6 +33,13 @@
 
   const LOAN_PERIOD_SLIDER_MIN = 1;
   const LOAN_PERIOD_SLIDER_MAX = 42;
+
+  const navigateToApply = () => {
+    router.push({
+      path: '/apply',
+      query: { ...route.query }
+    });
+  };
 
   const loanAmountFormatted = computed(() =>
       formatCurrency(loanAmount.value)
@@ -72,48 +83,43 @@
 
 <template>
   <section>
-    <div :class="{
-      'p-8': !small,
-      'md:p-[50px]': !small,
-      'md:pl-[80px]': !small,
-      'p-2': small,
-      'md:p-6': small,
-      }"
-    >
-      <h2 v-if="!small" class="text-xl">Нужен займ?</h2>
-      <p v-if="!small" class="mt-4 text-md">Получи первый займ прямо сейчас на карту</p>
+    <div :class="[small ? 'p-2 md:p-6' : 'p-8 md:p-[50px] md:pl-[80px]']">
+
+      <div v-if="!small">
+        <h2 class="text-xl">Нужен займ?</h2>
+        <p class="mt-4 text-md">Получи первый займ прямо сейчас на карту</p>
+      </div>
 
       <div>
         <Slider
-            class="mt-8"
-            :min="1000"
-            :max="100000"
-            :step="1000"
-            v-model="loanAmount"
-            label="Сумма"
-            @change="updateSavedCalculations"
-        >
-          {{ loanAmountFormatted }}
+          class="mt-8"
+          :min="1000"
+          :max="100000"
+          :step="1000"
+          v-model="loanAmount"
+          label="Сумма"
+          @change="updateSavedCalculations">
+          {{loanAmountFormatted}}
         </Slider>
 
         <Slider
-            class="mt-8"
-            :min="LOAN_PERIOD_SLIDER_MIN"   :max="LOAN_PERIOD_SLIDER_MAX"   :step="1"                       label="На какой срок?"
-            v-model="loanPeriod"
-            @change="updateSavedCalculations"
-        >
-          {{ loanPeriodFormatted }}
+          class="mt-8"
+          :min="LOAN_PERIOD_SLIDER_MIN"
+          :max="LOAN_PERIOD_SLIDER_MAX"
+          :step="1"
+          label="На какой срок?"
+          v-model="loanPeriod"
+          @change="updateSavedCalculations">
+          {{loanPeriodFormatted}}
         </Slider>
       </div>
 
-      <ButtonPrimary :class="{
-        'w-full': true,
-        'mt-10': true,
-        'rounded-lg': !small,
-        'rounded-full': small
-      }">
+      <ButtonGradient
+          :class="['w-full', 'mt-10', small ? 'rounded-full': 'rounded-lg']"
+          @click="navigateToApply"
+      >
         Оформить заявку
-      </ButtonPrimary>
+      </ButtonGradient>
 
       <div
         v-if="!small"
@@ -125,8 +131,8 @@
         px-2
         rounded-b-3xl
         -mt-1
-        whitespace-normal
-        ">
+        whitespace-normal"
+      >
         <span class="text-red font-bold">Акция:</span>
         займ до 50 000 для новых клиентов
       </div>
@@ -177,7 +183,7 @@
           </span>
         </div>
 
-        <ButtonRounded>
+        <ButtonRounded @click="navigateToApply">
           <span class="text-md text-black">&xrarr;</span>
         </ButtonRounded>
       </div>
