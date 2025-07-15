@@ -6,10 +6,10 @@
   import { createDefaultCalculations, saveCalculations } from '@/utils/session';
   import { useUtmSource } from '@/utils/utm.ts';
 
-  import ButtonGradient from "@/components/Common/Button/ButtonGradient.vue";
+  import ButtonGradient from "@/components/Common/Buttons/ButtonGradient.vue";
   import Separator from "@/components/Separator.vue";
   import Slider from '@/components/Slider.vue';
-  import ButtonRounded from "@/components/Common/Button/ButtonRounded.vue";
+  import ButtonRounded from "@/components/Common/Buttons/ButtonRounded.vue";
 
   withDefaults(
       defineProps<{

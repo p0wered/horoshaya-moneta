@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {saveQueryToCookie, useInactivityTimer} from "@/utils/common.ts";
-  import FooterPrimary from "@/components/FooterPrimary/FooterPrimary.vue";
   import {onMounted} from "vue";
+  import {saveQueryToCookie, useInactivityTimer} from "@/utils/common.ts";
+  import Footer from "@/components/Footer/Footer.vue";
 
   useInactivityTimer();
 
@@ -13,6 +13,6 @@ import {saveQueryToCookie, useInactivityTimer} from "@/utils/common.ts";
 <template>
   <main>
     <RouterView/>
-    <FooterPrimary/>
+    <Footer/>
   </main>
 </template>

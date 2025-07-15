@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { configProxy } from '@/config';
-  import ApplyFooterSection from "@/components/FooterPrimary/ApplyFooterSection.vue";
-  import CreditorsList from "@/components/FooterPrimary/CreditorsList.vue";
+  import ApplyFooterSection from "@/components/Footer/ApplyFooterSection.vue";
+  import CreditorsList from "@/components/Footer/CreditorsList.vue";
   import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
   import IconFooterMasterCard from "@/assets/icons/IconFooterMasterCard.vue";
   import IconFooterMir from "@/assets/icons/IconFooterMir.vue";
@@ -63,7 +63,7 @@
           </div>
         </section>
 
-        <section class="flex justify-between max-w-4xl m-auto mt-8">
+        <section class="flex justify-between max-w-4xl m-auto pt-8">
           <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
             <IconFooterVisa/>
           </div>

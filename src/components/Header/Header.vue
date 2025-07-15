@@ -4,7 +4,7 @@ import router from "@/router";
 import LogoBlack from '@/assets/images/logo_black.svg';
 import IconEmail from "@/assets/icons/IconEmail.vue";
 import IconPhone from "@/assets/icons/IconPhone.vue";
-import HeaderDropdown from "@/components/HeaderDropdown.vue";
+import HeaderDropdown from "@/components/Header/HeaderDropdown.vue";
 
 const domain = window.location.origin;
 const showEmailDropdown = ref(false);

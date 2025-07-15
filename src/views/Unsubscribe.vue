@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue';
   import axios from 'axios';
-  import Header from '@/components/Header.vue';
-  import InputPhone from '@/components/Common/Input/InputPhone.vue';
-  import InputCardNumber from '@/components/Common/Input/InputCardNumber.vue';
+  import Header from '@/components/Header/Header.vue';
+  import InputPhone from '@/components/Common/Inputs/InputPhone.vue';
+  import InputCardNumber from '@/components/Common/Inputs/InputCardNumber.vue';
   import UnsubscribeModal from '@/components/UnsubscribeModal.vue';
   import { sendMetrika } from '@/utils/common';
+  import RecommendationBlock from "@/components/RecommendationBlock.vue";
 
   const phoneUnsubscribe = ref('');
   const cardNumberUnsubscribe = ref('');
@@ -135,11 +136,11 @@
     <div class="flex md:flex-row flex-col justify-between gap-8 w-full">
       <div class="w-full">
         <p class="mb-2">Номер телефона <span class="text-red">*</span></p>
-        <InputPhone v-model="phoneUnsubscribe" id="phone-input" />
+        <InputPhone v-model="phoneUnsubscribe" id="phone-input"/>
       </div>
       <div class="w-full">
         <p class="mb-2">Номер привязанной карты <span class="text-red">*</span></p>
-        <InputCardNumber v-model="cardNumberUnsubscribe" id="card_number" />
+        <InputCardNumber v-model="cardNumberUnsubscribe" id="card_number"/>
       </div>
     </div>
 
@@ -184,17 +185,9 @@
     </button>
   </div>
 
-  <div class="max-w-3xl mx-auto text-center md:mt-24 mt-12 flex items-center flex-col p-8">
-    <h2 class="md:text-2xl text-xl max-w-[700px] mb-4 font-semibold">
-      Наш сервис рекомендуют более <span class="text-red">9407</span> человек
-    </h2>
-    <p class="text-lg text-black/60 max-w-[712px]">
-      Ежедневно мы помогаем получить займ и работаем для того, чтобы каждый клиент получил желаемую сумму.
-      Внимание! Услуга обработки заявки платная и составляет 1999 рублей каждые 30 дней.
-    </p>
-  </div>
+  <RecommendationBlock/>
 
-  <hr class="max-w-3xs mt-6 mb-24 mx-auto border-red border-3 rounded-full">
+  <hr class="max-w-3xs mt-[-5rem] mb-32 mx-auto border-red border-3 rounded-full">
 
   <UnsubscribeModal
       :show="showUnsubscribeModal"
