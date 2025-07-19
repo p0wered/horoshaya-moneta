@@ -6,6 +6,7 @@ interface Props {
   modelValue: boolean | string[];
   disabled?: boolean;
   name?: string;
+  isError?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -35,6 +36,9 @@ function updateInput(event: Event) {
     emit('update:modelValue', checked);
   }
 }
+
+// TODO фиксани варнинг на диве
+
 </script>
 
 <template>
@@ -51,7 +55,12 @@ function updateInput(event: Event) {
         :disabled="disabled"
     />
     <span
-        class="checkbox absolute left-0 top-[2px] h-5 w-5 rounded-sm transition-colors"
+        :class="[
+        'checkbox absolute left-0 top-[2px] h-5 w-5 rounded-xs transition-colors',
+        isError
+          ? 'checkbox-error'
+          : 'checkbox'
+        ]"
     ></span>
     <span
         class="absolute left-[7px] top-[5px] w-1.5 h-3 border-white border-r-2 border-b-2 rotate-45 hidden peer-checked:block"
@@ -60,12 +69,16 @@ function updateInput(event: Event) {
 </template>
 
 <style scoped>
-.checkbox {
-  border: 1px solid rgb(207, 211, 218);
-}
+  .checkbox {
+    border: 1px solid rgb(207, 211, 218);
+  }
 
-input:checked + .checkbox {
-  background-color: var(--color-red);
-  border: 0 solid rgb(207, 211, 218);
-}
+  .checkbox-error {
+    border: 1px solid red;
+  }
+
+  input:checked + .checkbox {
+    background-color: var(--color-red);
+    border: 0 solid rgb(207, 211, 218);
+  }
 </style>

@@ -1,8 +1,15 @@
 <script lang="ts" setup>
   import { ref, computed, defineProps, defineEmits, nextTick } from 'vue';
 
-  const props = defineProps<{ modelValue: string }>();
-  const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
+  const props = defineProps<{
+    modelValue: string;
+    isError?: boolean;
+    errorMessage?: string;
+  }>();
+
+  const emit = defineEmits<{
+    (e: 'update:modelValue', value: string): void;
+  }>();
 
   const inputRef = ref<HTMLInputElement>();
   const digits = ref('');
@@ -89,26 +96,26 @@
 <template>
   <div>
     <input
-        id="phone-input"
-        type="tel"
-        ref="inputRef"
-        :value="formatted"
-        @focus="onFocus"
-        @blur="onBlur"
-        @input="onInput"
-        @keydown="onKeyDown"
-        placeholder="+7 (900) 000-00-00"
-        maxlength="18"
-        inputmode="numeric"
-        class="
-          w-full
-          px-4 py-3
-          border border-gray-300
-          rounded-md
-          focus:outline-none
-          focus:ring-1
-          focus:ring-red
-          text-[18]"
+      id="phone-input"
+      type="tel"
+      ref="inputRef"
+      :value="formatted"
+      @focus="onFocus"
+      @blur="onBlur"
+      @input="onInput"
+      @keydown="onKeyDown"
+      placeholder="+7 (900) 000-00-00"
+      maxlength="18"
+      inputmode="numeric"
+      :class="[
+      'w-full px-4 py-3 border rounded-md focus:outline-none text-[18]',
+      props.isError
+        ? 'border-red-500 focus:border-red-500'
+        : 'border-gray-300 focus:border-red'
+      ]"
     />
+    <p v-if="props.isError && props.errorMessage" class="mt-2 text-xs text-red-500">
+      {{ props.errorMessage }}
+    </p>
   </div>
 </template>

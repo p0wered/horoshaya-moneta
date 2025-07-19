@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { configProxy } from '@/config';
+  import { useAutoDocs } from "@/utils/auto-docs.ts";
   import ApplyFooterSection from "@/components/Footer/ApplyFooterSection.vue";
   import CreditorsList from "@/components/Footer/CreditorsList.vue";
   import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
@@ -8,29 +8,15 @@
 
   const domain = window.location.origin;
 
-  interface DocumentItem {
-    slug: string;
-    pdf_path: string;
-  }
+  const {
+    publicOfertaPdf,
+    personalDataPoliticPdf,
+    personalDataAgreementPdf,
+    paidSubAgreementPdf,
+    recurrPaymentsAgreementPdf,
+    cardDataAgreementPdf,
+  } = useAutoDocs(domain)
 
-  interface DocumentMap {
-    [key: string]: string | null;
-  }
-
-  const domainConfig = configProxy[domain];
-  const documents: DocumentItem[] = domainConfig?.documents || [];
-
-  const documentMap: DocumentMap = documents.reduce((acc: DocumentMap, doc: DocumentItem) => {
-    acc[doc.slug] = doc.pdf_path;
-    return acc;
-  }, {});
-
-  const publicOfertaPdf = documentMap.offerta || null;
-  const personalDataPoliticPdf = documentMap.politics_obrab || null;
-  const personalDataAgreementPdf = documentMap.sogl_obrab || null;
-  const paidSubAgreementPdf = documentMap.sogl_podpiska || null;
-  const recurrPaymentsAgreementPdf = documentMap.recurr_payments_agreement || null;
-  const cardDataAgreementPdf = documentMap.card_data_agreement || null;
 </script>
 
 <template>

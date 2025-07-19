@@ -13,7 +13,7 @@ const showPhoneDropdown = ref(false);
 
 <template>
   <header class="relative bg-white border-b-1 border-b-gray-200">
-    <div class="container flex justify-between items-center md:p-8 p-4">
+    <div class="container flex justify-between items-center p-4">
       <img
           :src="LogoBlack"
           @click="router.push('/')"

@@ -7,6 +7,8 @@
     min?: number;
     max?: number;
     maxLength?: number;
+    isError?: boolean;
+    errorMessage?: string;
   }>();
 
   const emit = defineEmits<{
@@ -92,24 +94,23 @@
 <template>
   <div>
     <input
-        type="text"
-        :value="inputValue"
-        @input="onInput"
-        @blur="onBlur"
-        @keydown="onKeyDown"
-        :placeholder="placeholder"
-        :maxlength="maxLength"
-        inputmode="numeric"
-        class="
-        w-full
-        px-4 py-3
-        border border-gray-300
-        rounded-md
-        focus:outline-none
-        focus:ring-1
-        focus:ring-red
-        text-[18]
-      "
+      type="text"
+      :value="inputValue"
+      @input="onInput"
+      @blur="onBlur"
+      @keydown="onKeyDown"
+      :placeholder="placeholder"
+      :maxlength="maxLength"
+      inputmode="numeric"
+      :class="[
+      'w-full px-4 py-3 border rounded-md focus:outline-none text-[18]',
+      props.isError
+        ? 'border-red-500 focus:border-red-500'
+        : 'border-gray-300 focus:border-red'
+      ]"
     />
+    <p v-if="props.isError && props.errorMessage" class="mt-2 text-xs text-red-500">
+      {{ props.errorMessage }}
+    </p>
   </div>
 </template>

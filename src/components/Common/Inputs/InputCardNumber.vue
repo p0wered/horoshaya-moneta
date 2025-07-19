@@ -1,7 +1,11 @@
 <script lang="ts" setup>
   import { ref, computed, watch } from 'vue';
 
-  const props = defineProps<{ modelValue: string }>();
+  const props = defineProps<{
+    modelValue: string;
+    isError?: boolean;
+    errorMessage?: string;
+  }>();
   const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
   }>();
@@ -39,17 +43,14 @@
 
 <template>
   <input
-      v-model="formattedValue"
-      placeholder="Первые 6 и последние 4 цифры"
-      maxlength="19"
-      class="
-      w-full
-      px-4 py-3
-      border border-gray-300
-      rounded-md
-      focus:outline-none
-      focus:ring-1
-      focus:ring-red
-      text-[18]"
+    v-model="formattedValue"
+    placeholder="Первые 6 и последние 4 цифры"
+    maxlength="19"
+    :class="[
+    'w-full px-4 py-3 border rounded-md focus:outline-none text-[18]',
+    props.isError
+      ? 'border-red-500 focus:border-red-500'
+      : 'border-gray-300 focus:border-red'
+    ]"
   />
 </template>
