@@ -8,6 +8,8 @@
   onMounted(() => {
     saveQueryToCookie();
   })
+
+  //TODO накинуть transition на инпуты
 </script>
 
 <template>

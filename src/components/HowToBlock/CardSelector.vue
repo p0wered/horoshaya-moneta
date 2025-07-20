@@ -38,7 +38,7 @@
       <li
           v-for="(card, index) in cards"
           :key="index"
-          class="px-2 py-2 cursor-pointer rounded-lg lg:min-w-[360px] relative"
+          class="px-2 py-2 cursor-pointer rounded-lg lg:min-w-[360px] relative flex items-center"
           @click="selectedCardIndex = index"
           :class="{ 'is-selected': selectedCardIndex === index }"
       >
@@ -51,7 +51,7 @@
           {{ card.title }}
         </span>
 
-        <span v-if="selectedCardIndex === index" class="hidden lg:inline text-md absolute right-4 arrow">&xrarr;</span>
+        <span v-if="selectedCardIndex === index" class="hidden lg:inline text-md absolute right-4">→</span>
       </li>
     </ul>
 
@@ -65,9 +65,5 @@
 <style scoped>
 .is-selected {
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-}
-
-.arrow {
-  top: calc(50% - 10px);
 }
 </style>

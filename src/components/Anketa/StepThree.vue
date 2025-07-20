@@ -1,70 +1,106 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue';
-import InputPassport from "@/components/Common/Inputs/InputPassport.vue";
-import InputDate from "@/components/Common/Inputs/InputDate.vue";
-import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
-import ButtonSecondary from "@/components/Common/Buttons/ButtonSecondary.vue";
-import {
-  validatePassportSeriesAndNumber,
-  validateSubdivisionCode,
-  validateDate
-} from '@/utils/validators'; // Импортируем валидаторы
+  import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
+  import InputPassport from "@/components/Common/Inputs/InputPassport.vue";
+  import InputDate from "@/components/Common/Inputs/InputDate.vue";
+  import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
+  import ButtonSecondary from "@/components/Common/Buttons/ButtonSecondary.vue";
+  import {
+    validatePassportSeriesAndNumber,
+    validateSubdivisionCode,
+    validateDate
+  } from '@/utils/validators';
 
-interface StepThreeFormData {
-  seriesAndNumber: string;
-  subdivisionCode: string;
-  issueDate: string;
-}
-
-const props = defineProps<{
-  formData: StepThreeFormData;
-  isLoading: boolean;
-}>();
-
-const emit = defineEmits<{
-  (e: 'submit-step'): void;
-  (e: 'prev-step'): void;
-  (e: 'update:formData', value: StepThreeFormData): void;
-}>();
-
-// Локальные ref для ошибок
-const seriesAndNumberError = ref('');
-const subdivisionCodeError = ref('');
-const issueDateError = ref('');
-
-const validateStep = () => {
-  let isValid = true;
-
-  seriesAndNumberError.value = validatePassportSeriesAndNumber(props.formData.seriesAndNumber);
-  if (seriesAndNumberError.value) isValid = false;
-
-  subdivisionCodeError.value = validateSubdivisionCode(props.formData.subdivisionCode);
-  if (subdivisionCodeError.value) isValid = false;
-
-  issueDateError.value = validateDate(props.formData.issueDate, 'Дата выдачи');
-  if (issueDateError.value) isValid = false;
-
-  return isValid;
-};
-
-const handleSubmit = () => {
-  if (validateStep()) {
-    emit('submit-step');
+  interface StepThreeFormData {
+    seriesAndNumber: string;
+    subdivisionCode: string;
+    issueDate: string;
   }
-};
 
-const handlePrev = () => {
-  emit('prev-step');
-};
+  const props = defineProps<{
+    formData: StepThreeFormData;
+    isLoading: boolean;
+  }>();
 
-// Функции для очистки ошибок при вводе
-const clearPassportError = (field: 'seriesAndNumber' | 'subdivisionCode') => {
-  if (field === 'seriesAndNumber') seriesAndNumberError.value = '';
-  if (field === 'subdivisionCode') subdivisionCodeError.value = '';
-};
-const clearDateError = (field: 'issueDate') => {
-  if (field === 'issueDate') issueDateError.value = '';
-};
+  const emit = defineEmits<{
+    (e: 'submit-step'): void;
+    (e: 'prev-step'): void;
+    (e: 'update:formData', value: StepThreeFormData): void;
+  }>();
+
+  const seriesAndNumberError = ref('');
+  const subdivisionCodeError = ref('');
+  const issueDateError = ref('');
+
+  const localStorageKeys: Record<keyof StepThreeFormData, string> = {
+    seriesAndNumber: 'passportSeriesAndNumber',
+    subdivisionCode: 'passportSubdivisionCode',
+    issueDate: 'passportThreeIssueDate',
+  };
+
+  onMounted(() => {
+    let hasLoadedData = false;
+    for (const keyString in localStorageKeys) {
+      const key = keyString as keyof StepThreeFormData;
+      const lsKey = localStorageKeys[key];
+      const savedValue = localStorage.getItem(lsKey);
+
+      if (savedValue !== null) {
+        props.formData[key] = savedValue;
+        hasLoadedData = true;
+      }
+    }
+
+    if (hasLoadedData) {
+      emit('update:formData', props.formData);
+    }
+  });
+
+  watch(() => props.formData, (newFormData) => {
+    for (const keyString in localStorageKeys) {
+      const key = keyString as keyof StepThreeFormData;
+      const lsKey = localStorageKeys[key];
+      const valueToStore = newFormData[key];
+
+      if (valueToStore === null || valueToStore === undefined || valueToStore === '') {
+        localStorage.removeItem(lsKey);
+      } else {
+        localStorage.setItem(lsKey, String(valueToStore));
+      }
+    }
+  }, { deep: true });
+
+  const validateStep = () => {
+    let isValid = true;
+
+    seriesAndNumberError.value = validatePassportSeriesAndNumber(props.formData.seriesAndNumber);
+    if (seriesAndNumberError.value) isValid = false;
+
+    subdivisionCodeError.value = validateSubdivisionCode(props.formData.subdivisionCode);
+    if (subdivisionCodeError.value) isValid = false;
+
+    issueDateError.value = validateDate(props.formData.issueDate);
+    if (issueDateError.value) isValid = false;
+
+    return isValid;
+  };
+
+  const handleSubmit = () => {
+    if (validateStep()) {
+      emit('submit-step');
+    }
+  };
+
+  const handlePrev = () => {
+    emit('prev-step');
+  };
+
+  const clearPassportError = (field: 'seriesAndNumber' | 'subdivisionCode') => {
+    if (field === 'seriesAndNumber') seriesAndNumberError.value = '';
+    if (field === 'subdivisionCode') subdivisionCodeError.value = '';
+  };
+  const clearDateError = (field: 'issueDate') => {
+    if (field === 'issueDate') issueDateError.value = '';
+  };
 </script>
 
 <template>
@@ -101,7 +137,7 @@ const clearDateError = (field: 'issueDate') => {
           v-model="props.formData.issueDate"
           :is-error="!!issueDateError"
           :error-message="issueDateError"
-          @blur="issueDateError = validateDate(props.formData.issueDate, 'Дата выдачи')"
+          @blur="issueDateError = validateDate(props.formData.issueDate)"
           @input="clearDateError('issueDate')"
       />
     </div>

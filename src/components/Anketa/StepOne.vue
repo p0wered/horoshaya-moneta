@@ -1,78 +1,74 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue';
-import InputPhone from "@/components/Common/Inputs/InputPhone.vue";
-import UserAgreement from "@/components/Anketa/UserAgreement.vue";
-import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
-import { validatePhone } from '@/utils/validators';
+  import { defineProps, defineEmits, ref } from 'vue';
+  import {useUtmSource} from "@/utils/utm.ts";
+  import { validatePhone } from '@/utils/validators';
+  import InputPhone from "@/components/Common/Inputs/InputPhone.vue";
+  import UserAgreement from "@/components/Anketa/UserAgreement.vue";
+  import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
 
-interface StepOneFormData {
-  phone: string;
-  userAgreementOne: boolean;
-  userAgreementTwo: boolean;
-}
-
-const props = defineProps<{
-  formData: StepOneFormData;
-  isLoading: boolean;
-}>();
-
-const emit = defineEmits<{
-  (e: 'submit-step'): void;
-  (e: 'update:formData', value: StepOneFormData): void;
-}>();
-
-// Локальные ref для ошибок
-const phoneError = ref('');
-// Ошибки для чекбоксов
-const agreementOneError = ref('');
-const agreementTwoError = ref('');
-
-
-const validateStep = () => {
-  let isValid = true;
-
-  // Валидация телефона
-  phoneError.value = validatePhone(props.formData.phone);
-  if (phoneError.value) {
-    isValid = false;
+  interface StepOneFormData {
+    phone: string;
+    userAgreementOne: boolean;
+    userAgreementTwo: boolean;
   }
 
-  // Валидация чекбоксов
-  if (!props.formData.userAgreementOne) {
-    agreementOneError.value = 'Вы должны принять все условия.';
-    isValid = false;
-  } else {
+  const props = defineProps<{
+    formData: StepOneFormData;
+    isLoading: boolean;
+  }>();
+
+  const emit = defineEmits<{
+    (e: 'submit-step'): void;
+    (e: 'update:formData', value: StepOneFormData): void;
+  }>();
+
+  const { hasUtmSource } = useUtmSource();
+
+  const phoneError = ref('');
+  const agreementOneError = ref('');
+  const agreementTwoError = ref('');
+
+  const validateStep = () => {
+    let isValid = true;
+
+    phoneError.value = validatePhone(props.formData.phone);
+    if (phoneError.value) {
+      isValid = false;
+    }
+
+    if (!props.formData.userAgreementOne) {
+      agreementOneError.value = 'Вы должны принять все условия';
+      isValid = false;
+    } else {
+      agreementOneError.value = '';
+    }
+
+    if (!hasUtmSource.value && !props.formData.userAgreementTwo) {
+      agreementTwoError.value = 'Вы должны принять все условия';
+      isValid = false;
+    } else {
+      agreementTwoError.value = '';
+    }
+
+    return isValid;
+  };
+
+  const handleSubmit = () => {
+    if (validateStep()) {
+      emit('submit-step');
+    }
+  };
+
+  const clearPhoneError = () => {
+    phoneError.value = '';
+  };
+
+  const clearAgreementOneError = () => {
     agreementOneError.value = '';
-  }
-
-  if (!props.formData.userAgreementTwo) {
-    agreementTwoError.value = 'Вы должны принять все условия.';
-    isValid = false;
-  } else {
+  };
+  const clearAgreementTwoError = () => {
     agreementTwoError.value = '';
-  }
-
-  return isValid;
-};
-
-const handleSubmit = () => {
-  if (validateStep()) {
-    emit('submit-step');
-  }
-};
-
-// Функция для очистки ошибки при вводе
-const clearPhoneError = () => {
-  phoneError.value = '';
-};
-
-// Функции для очистки ошибок чекбоксов при изменении
-const clearAgreementOneError = () => {
-  agreementOneError.value = '';
-};
-const clearAgreementTwoError = () => {
-  agreementTwoError.value = '';
-};
+  };
 </script>
 
 <template>
@@ -101,9 +97,10 @@ const clearAgreementTwoError = () => {
       :is-error-two="!!agreementTwoError"
       @update:checkboxOne="clearAgreementOneError"
       @update:checkboxTwo="clearAgreementTwoError"
+      :show-second-checkbox="!hasUtmSource"
   />
 
-  <p v-if="!!agreementOneError || !!agreementTwoError" class="text-red text-xs mt-2">
+  <p v-if="!!agreementOneError || (!hasUtmSource && !!agreementTwoError)" class="text-red text-xs mt-2">
     {{ agreementOneError || agreementTwoError }}
   </p>
 

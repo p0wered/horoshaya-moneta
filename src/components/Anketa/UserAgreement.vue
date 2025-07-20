@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits } from "vue";
+  import { defineProps, defineEmits, onMounted, watch } from "vue";
   import { useAutoDocs } from "@/utils/auto-docs.ts";
+  import { setCookie } from "@/utils/common.ts";
   import CheckboxPrimary from "@/components/Common/Checkboxes/CheckboxPrimary.vue";
 
   const domain = window.location.origin;
@@ -10,6 +11,7 @@
     checkboxTwo: boolean;
     isErrorOne?: boolean;
     isErrorTwo?: boolean;
+    showSecondCheckbox?: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -17,9 +19,35 @@
     (e: 'update:checkboxTwo', value: boolean): void;
   }>();
 
+  const localStorageKeyOne = 'userAgreementOneState';
+  const localStorageKeyTwo = 'userAgreementTwoState';
+
+  const setAgreementTime = () => {
+    const currentDate = new Date().toISOString();
+    setCookie('agreement_time', currentDate);
+  }
+
+  onMounted(() => {
+    const savedCheckboxOne = localStorage.getItem(localStorageKeyOne);
+    if (savedCheckboxOne !== null) {
+      emit('update:checkboxOne', savedCheckboxOne === 'true');
+    }
+
+    if (props.showSecondCheckbox) {
+      const savedCheckboxTwo = localStorage.getItem(localStorageKeyTwo);
+      if (savedCheckboxTwo !== null) {
+        emit('update:checkboxTwo', savedCheckboxTwo === 'true');
+      }
+    }
+  });
+
   const updateCheckboxOne = (value: boolean | string[]) => {
     if (typeof value === 'boolean') {
       emit('update:checkboxOne', value);
+    }
+
+    if (value) {
+      setAgreementTime();
     }
   };
 
@@ -27,7 +55,23 @@
     if (typeof value === 'boolean') {
       emit('update:checkboxTwo', value);
     }
+
+    if (value) {
+      setAgreementTime();
+    }
   };
+
+  watch(() => props.checkboxOne, (newValue) => {
+    localStorage.setItem(localStorageKeyOne, String(newValue));
+  });
+
+  watch(() => props.checkboxTwo, (newValue) => {
+    if (props.showSecondCheckbox) {
+      localStorage.setItem(localStorageKeyTwo, String(newValue));
+    } else {
+      localStorage.removeItem(localStorageKeyTwo);
+    }
+  });
 
   const {
     publicOfertaPdf,
@@ -53,6 +97,7 @@
   </CheckboxPrimary>
 
   <CheckboxPrimary
+      v-if="props.showSecondCheckbox"
       :model-value="props.checkboxTwo"
       @update:model-value="updateCheckboxTwo"
       :is-error="props.isErrorTwo"

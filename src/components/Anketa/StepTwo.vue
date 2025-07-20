@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits, ref } from 'vue';
+  import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
   import InputString from "@/components/Common/Inputs/InputString.vue";
   import InputDate from "@/components/Common/Inputs/InputDate.vue";
   import InputEmail from "@/components/Common/Inputs/InputEmail.vue";
@@ -51,6 +51,95 @@
   const loanAmountError = ref('');
   const loanPeriodError = ref('');
 
+  const localStorageKeys: Record<Exclude<keyof StepTwoFormData, 'loanAmount' | 'loanPeriod'>, string> = {
+    lastName: 'last_name',
+    firstName: 'first_name',
+    patronymic: 'patronymic',
+    birthdayDate: 'birthday_date',
+    email: 'email',
+    gender: 'gender',
+  };
+
+  const sessionStorageCalculationsKey = 'savedCalculations';
+  const defaultLoanAmount = 50000;
+  const defaultLoanPeriod = 30;
+
+  onMounted(() => {
+    let hasLoadedData = false;
+
+    for (const keyString in localStorageKeys) {
+      const key = keyString as Exclude<keyof StepTwoFormData, 'loanAmount' | 'loanPeriod'>;
+      const lsKey = localStorageKeys[key];
+      const savedValue = localStorage.getItem(lsKey);
+
+      if (savedValue !== null) {
+        if (key === 'gender') {
+          const genderFound = genderOptions.some(opt => opt.value === savedValue);
+          if (genderFound) {
+            props.formData[key] = savedValue as any;
+            hasLoadedData = true;
+          }
+        } else {
+          props.formData[key] = savedValue as any;
+          hasLoadedData = true;
+        }
+      }
+    }
+
+    const savedCalculationsRaw = sessionStorage.getItem(sessionStorageCalculationsKey);
+    let calculations: { amount?: number; period?: number; isWeeklyPeriod?: boolean } = {};
+
+    if (savedCalculationsRaw) {
+      try {
+        calculations = JSON.parse(savedCalculationsRaw);
+      } catch (e) {
+        console.error("Failed to parse savedCalculations from sessionStorage:", e);
+      }
+    }
+
+    const loadedAmount = typeof calculations.amount === 'number' ? calculations.amount : defaultLoanAmount;
+    props.formData.loanAmount = loadedAmount;
+    if (loadedAmount !== defaultLoanAmount) hasLoadedData = true;
+
+    const loadedPeriod = typeof calculations.period === 'number' ? calculations.period : defaultLoanPeriod;
+    props.formData.loanPeriod = loadedPeriod;
+    if (loadedPeriod !== defaultLoanPeriod) hasLoadedData = true;
+
+    if (hasLoadedData) {
+      emit('update:formData', props.formData);
+    }
+  });
+
+  watch(() => props.formData, (newFormData) => {
+    for (const keyString in localStorageKeys) {
+      const key = keyString as Exclude<keyof StepTwoFormData, 'loanAmount' | 'loanPeriod'>;
+      const lsKey = localStorageKeys[key];
+      let valueToStore: string | number | undefined = newFormData[key];
+
+      if (valueToStore === null || valueToStore === undefined || valueToStore === '') {
+        localStorage.removeItem(lsKey);
+      } else {
+        localStorage.setItem(lsKey, String(valueToStore));
+      }
+    }
+
+    const existingCalculationsRaw = sessionStorage.getItem(sessionStorageCalculationsKey);
+    let currentCalculations: { amount?: number; period?: number; isWeeklyPeriod?: boolean } = {};
+    if (existingCalculationsRaw) {
+      try {
+        currentCalculations = JSON.parse(existingCalculationsRaw);
+      } catch (e) {
+        console.error("Не удалось спрасить значения суммы и срока займа из sessionStorage", e);
+      }
+    }
+
+    currentCalculations.amount = newFormData.loanAmount;
+    currentCalculations.period = newFormData.loanPeriod;
+
+    sessionStorage.setItem(sessionStorageCalculationsKey, JSON.stringify(currentCalculations));
+
+  }, { deep: true });
+
   const validateStep = () => {
     let isValid = true;
 
@@ -91,18 +180,14 @@
     emit('prev-step');
   };
 
-  // Функции для очистки ошибок при вводе
-  const clearStringError = (field: 'lastName' | 'firstName' | 'patronymic' | 'email') => {
-    if (field === 'lastName') lastNameError.value = '';
-    if (field === 'firstName') firstNameError.value = '';
+  const clearStringError = (field: 'last_name' | 'first_name' | 'patronymic' | 'email') => {
+    if (field === 'last_name') lastNameError.value = '';
+    if (field === 'first_name') firstNameError.value = '';
     if (field === 'patronymic') patronymicError.value = '';
     if (field === 'email') emailError.value = '';
   };
-  const clearDateError = (field: 'birthdayDate') => {
-    if (field === 'birthdayDate') birthdayDateError.value = '';
-  };
-  const clearGenderError = () => {
-    genderError.value = '';
+  const clearDateError = (field: 'birthday_date') => {
+    if (field === 'birthday_date') birthdayDateError.value = '';
   };
   const clearNumericError = (field: 'loanAmount' | 'loanPeriod') => {
     if (field === 'loanAmount') loanAmountError.value = '';
@@ -125,7 +210,7 @@
           :is-error="!!lastNameError"
           :error-message="lastNameError"
           @blur="lastNameError = validateRequiredString(props.formData.lastName)"
-          @input="clearStringError('lastName')"
+          @input="clearStringError('last_name')"
       />
     </div>
     <div class="w-full">
@@ -136,7 +221,7 @@
           :is-error="!!firstNameError"
           :error-message="firstNameError"
           @blur="firstNameError = validateRequiredString(props.formData.firstName)"
-          @input="clearStringError('firstName')"
+          @input="clearStringError('first_name')"
       />
     </div>
     <div class="w-full">
@@ -160,7 +245,7 @@
           :is-error="!!birthdayDateError"
           :error-message="birthdayDateError"
           @blur="birthdayDateError = validateDate(props.formData.birthdayDate)"
-          @input="clearDateError('birthdayDate')"
+          @input="clearDateError('birthday_date')"
       />
     </div>
     <div class="w-full">

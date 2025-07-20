@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, computed, defineProps, defineEmits, nextTick } from 'vue';
+  import { ref, computed, defineProps, defineEmits, nextTick, watch, onMounted } from 'vue';
 
   const props = defineProps<{
     modelValue: string;
@@ -11,14 +11,24 @@
     (e: 'update:modelValue', value: string): void;
   }>();
 
+  const localStorageKey = 'userPhone';
+
   const inputRef = ref<HTMLInputElement>();
   const digits = ref('');
   const isFocused = ref(false);
 
-  if (props.modelValue) {
-    const d = props.modelValue.replace(/\D/g, '');
-    digits.value = d.startsWith('7') ? d.slice(1, 11) : d.slice(0, 10);
-  }
+  onMounted(() => {
+    const savedPhone = localStorage.getItem(localStorageKey);
+    if (savedPhone) {
+      const d = savedPhone.replace(/\D/g, '');
+      digits.value = d.startsWith('7') ? d.slice(1, 11) : d.slice(0, 10);
+      emit('update:modelValue', formatted.value);
+    } else if (props.modelValue) {
+      const d = props.modelValue.replace(/\D/g, '');
+      digits.value = d.startsWith('7') ? d.slice(1, 11) : d.slice(0, 10);
+    }
+  });
+
 
   const formatted = computed(() => {
     if (!isFocused.value && !digits.value) return ''
@@ -62,6 +72,7 @@
     isFocused.value = false
     if (!digits.value) {
       emit('update:modelValue', '');
+      localStorage.removeItem(localStorageKey);
     }
   }
 
@@ -91,23 +102,31 @@
       e.preventDefault();
     }
   }
+
+  watch(() => props.modelValue, (newValue) => {
+    if (newValue) {
+      localStorage.setItem(localStorageKey, newValue);
+    } else {
+      localStorage.removeItem(localStorageKey);
+    }
+  });
 </script>
 
 <template>
   <div>
     <input
-      id="phone-input"
-      type="tel"
-      ref="inputRef"
-      :value="formatted"
-      @focus="onFocus"
-      @blur="onBlur"
-      @input="onInput"
-      @keydown="onKeyDown"
-      placeholder="+7 (900) 000-00-00"
-      maxlength="18"
-      inputmode="numeric"
-      :class="[
+        id="phone-input"
+        type="tel"
+        ref="inputRef"
+        :value="formatted"
+        @focus="onFocus"
+        @blur="onBlur"
+        @input="onInput"
+        @keydown="onKeyDown"
+        placeholder="+7 (900) 000-00-00"
+        maxlength="18"
+        inputmode="numeric"
+        :class="[
       'w-full px-4 py-3 border rounded-md focus:outline-none text-[18]',
       props.isError
         ? 'border-red-500 focus:border-red-500'
