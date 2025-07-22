@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { useUtmSource } from '@/utils/utm.ts';
+  import { useUtmSource } from '@/utils/common.ts';
 
   interface ApplyProgress {
     step: number;

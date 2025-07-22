@@ -1,7 +1,6 @@
 <script setup lang="ts">
-  import {ref, reactive, onMounted, watch} from "vue";
-  import { useUtmSource } from '@/utils/utm.ts';
-  import Header from "@/components/Header/Header.vue";
+  import { ref, reactive, onMounted, watch } from "vue";
+  import { useUtmSource } from '@/utils/common.ts';
   import ApplyProgress from "@/components/Anketa/ApplyProgress.vue";
   import RecommendationBlock from "@/components/RecommendationBlock.vue";
   import StepOne from "@/components/Anketa/StepOne.vue";
@@ -30,21 +29,18 @@
     subdivisionCode: '',
     issueDate: '',
     lead_id: '',
-    paymentCompleted: false,
   });
 
   onMounted(() => {
     const savedStep = localStorage.getItem('currentAnketaStep');
+
     if (savedStep) {
-      step.value = parseInt(savedStep);
-    }
+      const parsedStep = parseInt(savedStep);
 
-    const savedPaymentCompleted = localStorage.getItem('paymentCompleted');
-    if (savedPaymentCompleted === 'true') {
-      formData.paymentCompleted = true;
-
-      if (step.value <= 4) {
-        step.value = 5;
+      if (parsedStep >= 4) {
+        step.value = 3;
+      } else {
+        step.value = parsedStep;
       }
     }
   });
@@ -52,7 +48,6 @@
   watch(step, (newStep) => {
     localStorage.setItem('currentAnketaStep', String(newStep));
   });
-
 
   // временно для отладки
   const simulateApiRequest = (data: any, stepNum: number) => {
@@ -144,19 +139,23 @@
   };
 
   const handleVerificationComplete = () => {
-    console.log('Data verification completed. Transitioning to PaymentForm.');
-    localStorage.setItem('paymentCompleted', 'true');
-    formData.paymentCompleted = true;
     step.value++;
   };
 </script>
 
 <template>
-  <Header/>
-
-  <div class="md:px-12 md:pt-8 md:pb-6 p-5 bg-white md:border-1 border-b-1 border-gray-200 max-w-3xl mx-auto md:my-8 mb-4 md:rounded-2xl">
-    <ApplyProgress v-if="step <= 3" :step="step"/>
-
+  <div class="
+    p-5 md:px-12 md:pt-8 md:pb-8
+    bg-white
+    border-b-1 border-gray-200 md:border-1
+    max-w-3xl mx-auto
+    md:my-8 mb-4
+    md:rounded-2xl"
+  >
+    <ApplyProgress
+        v-if="step <= 3"
+        :step="step"
+    />
     <StepOne
         v-if="step === 1"
         v-model:form-data="formData"
@@ -188,6 +187,5 @@
         :loan-period="formData.loanPeriod"
     />
   </div>
-
   <RecommendationBlock/>
 </template>

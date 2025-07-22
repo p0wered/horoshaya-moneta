@@ -1,12 +1,19 @@
 <script setup lang="ts">
+  import {defineProps} from "vue";
   import { useAutoDocs } from "@/utils/auto-docs.ts";
+  import { useUtmSource} from "@/utils/common.ts";
   import ApplyFooterSection from "@/components/Footer/ApplyFooterSection.vue";
   import CreditorsList from "@/components/Footer/CreditorsList.vue";
   import IconFooterVisa from "@/assets/icons/IconFooterVisa.vue";
   import IconFooterMasterCard from "@/assets/icons/IconFooterMasterCard.vue";
   import IconFooterMir from "@/assets/icons/IconFooterMir.vue";
 
+  const {short} = defineProps<{
+    short?: boolean;
+  }>();
+
   const domain = window.location.origin;
+  const { hasUtmSource } = useUtmSource();
 
   const {
     publicOfertaPdf,
@@ -24,24 +31,25 @@
     <div class="container ">
       <footer class="mx-auto px-5 md:px-20 text-white">
 
-        <section class="
-          flex
-          justify-center
-          items-center
-          border-b border-gray-dark
-          py-10
-          flex-col-reverse
-          md:flex-row
-          gap-8"
+        <section v-if="!short"
+          class="
+            flex
+            justify-center
+            items-center
+            border-b border-gray-dark
+            py-10
+            flex-col-reverse
+            md:flex-row
+            gap-8"
         >
           <div class="flex gap-4 flex-wrap justify-between">
             <a class="
-                border border-gray-border-dark
-                rounded-lg
-                px-3 sm:px-7 py-3
-                text-sm cursor-pointer
-                hover:bg-neutral-800
-                transition
+              border border-gray-border-dark
+              rounded-lg
+              px-3 sm:px-7 py-3
+              text-sm cursor-pointer
+              hover:bg-neutral-800
+              transition
               "
               href="/unsubscribe">
               Отписаться от услуг
@@ -49,7 +57,14 @@
           </div>
         </section>
 
-        <section class="flex justify-between max-w-4xl m-auto pt-8">
+        <section v-if="!short"
+          class="
+            flex
+            justify-between
+            max-w-4xl
+            m-auto
+            pt-8"
+        >
           <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
             <IconFooterVisa/>
           </div>
@@ -69,8 +84,7 @@
           py-10
           flex-col
           md:flex-row
-          gap-6
-      "
+          gap-6"
         >
           <div class="text-center md:text-left">
             <p class="text-sm text-white/50">Телефон для связи</p>
@@ -103,7 +117,7 @@
           </div>
         </section>
 
-        <section class="py-10 text-white/50 text-xs">
+        <section v-if="!short" class="py-10 text-white/50 text-xs">
           <p>
             {{ $config[domain].type }} {{ $config[domain].legalEntity }},
 
@@ -189,10 +203,11 @@
           </h4>
 
           <h4 class="font-bold mt-1">
-            Услуги по договору оплачиваются в размере не более 3000 руб. в месяц. Оплата производится частями от 99 руб. до
-            3000 руб. каждые 30 дней, с регулярностью попыток списания 1 раз в день. Подробная информация в указана в
-            договоре. Для отказа от продления деактивируйте карту в личном кабинете сайта. Активация сервиса не гарантирует
-            вам получение займа. Для отключения СМС уведомлений напишите на почту {{ $config[domain].email }}.
+            Услуги по договору оплачиваются в размере не более {{ $config[domain].sum }} руб. в месяц. Оплата
+            производится частями от 99 руб. до {{ $config[domain].sum }} руб. каждые 30 дней, с регулярностью попыток
+            списания 1 раз в день. Подробная информация в указана в договоре. Для отказа от продления деактивируйте
+            карту в личном кабинете сайта. Активация сервиса не гарантирует вам получение займа. Для отключения СМС
+            уведомлений напишите на почту {{ $config[domain].email }}.
           </h4>
 
           <p class="font-bold mt-4">
@@ -288,6 +303,18 @@
             </ul>
           </ApplyFooterSection>
         </section>
+
+        <section v-if="short && !hasUtmSource" class="text-white/50 text-xs py-4">
+          <p>
+            * У пользователей сервиса есть возможность получить займ с минимальной процентной ставкой одобренной МФО.
+            Подробности при выборе персонального предложения. Займ у партнеров выдается в российских рублях гражданам
+            Российской Федерации, на банковский счет, на карту или наличными. Минимальная сумма займа: 1 000 рублей.
+            Максимальная сумма займа: 100 000 рублей. Процентная ставка и срок займа: по решению МФО. Услугу сервиса
+            платного подбора займов предоставляет
+            Индивидуальный предприниматель МИРОНОВ МИХАИЛ ЮРЬЕВИЧ ИНН 774322792440 ОГРН 323774600780532
+          </p>
+        </section>
+
       </footer>
     </div>
   </footer>

@@ -3,6 +3,7 @@
   import { configProxy } from "@/config";
   import axios from 'axios';
   import PieChart from "@/components/PieChart.vue";
+  import CheckboxPrimary from "@/components/Common/Checkboxes/CheckboxPrimary.vue";
 
   const props = defineProps<{
     loanAmount: number;
@@ -12,8 +13,16 @@
   const domain = window.location.origin;
   const paymentLink = ref<string | null>(null);
   const hasError = ref(false);
+  const showTerminal = ref(false);
   const isLoadingPayment = ref(true);
   const displayFullName = ref<string>('');
+
+  const chartData = ref([
+    { percentage: 50, label: 'Выбрано' },
+    { percentage: 65, label: 'Больше сумма' },
+    { percentage: 30, label: 'Больше срок' },
+    { percentage: 10, label: 'Меньше сумма' },
+  ]);
 
   onMounted(async () => {
     const savedFirstName = localStorage.getItem('first_name');
@@ -98,39 +107,35 @@
   </div>
 
   <div class="flex justify-between mb-8">
-    <div class="flex flex-col items-center">
+    <div v-for="(chart, index) in chartData" :key="index" class="flex flex-col items-center">
       <PieChart
-        :percentage="50"
-        :stroke-width="14"
-      />
-      <p class="mt-2">Выбрано</p>
-    </div>
-    <div class="flex flex-col items-center">
-      <PieChart
-          :percentage="65"
+          :percentage="chart.percentage"
           :stroke-width="14"
       />
-      <p class="mt-2">Больше сумма</p>
-    </div>
-    <div class="flex flex-col items-center">
-      <PieChart
-          :percentage="30"
-          :stroke-width="14"
-      />
-      <p class="mt-2">Больше срок</p>
-    </div>
-    <div class="flex flex-col items-center">
-      <PieChart
-          :percentage="10"
-          :stroke-width="14"
-      />
-      <p class="mt-2">Меньше сумма</p>
+      <p class="mt-2">{{ chart.label }}</p>
     </div>
   </div>
 
-  <div>
+  <p class="font-bold text-md mb-4 text-center">
+    Оформление подписки и активация платной подписки по вашей карте стоимостью {{ $config[domain].sum }} рублей в месяц.
+  </p>
+
+  <div class="mb-2">
+    <CheckboxPrimary v-model="showTerminal">
+      <p class="text-sm text-black">
+        Сервис осуществляет подбор микрозаймов между лицом, желающим оформить займ, и кредитными учреждениями.
+        <span class="font-bold">
+          Вы оформляете подписку стоимостью {{ $config[domain].sum }} рублей в месяц согласно тарифам.
+        </span>
+        Для отписки воспользуйтесь кнопкой отписки на главной странице сайта или на странице
+        <a href="/unsubscribe">отписки.</a>
+      </p>
+    </CheckboxPrimary>
+  </div>
+
+  <div v-if="showTerminal">
     <div
-        v-if="!paymentLink"
+      v-if="!paymentLink"
       :class="[
         'flex justify-center items-center',
         'min-h-32 mb-3',
@@ -146,12 +151,12 @@
       <p v-else-if="hasError">Произошла ошибка при загрузке терминала оплаты</p>
     </div>
     <iframe
-        v-else
-        :src="paymentLink"
-        class="rounded-lg mb-4"
-        width="100%"
-        height="400px"
-        allowfullscreen
-    ></iframe>
+      v-else
+      :src="paymentLink"
+      class="rounded-lg mb-4"
+      width="100%"
+      height="400px"
+      allowfullscreen
+    />
   </div>
 </template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
   <svg width="80" height="24" viewBox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M71.7529 0H56.4128C57.2375 5.11338 62.1859 9.89687 67.6292 9.89687H79.8354C80.0003 9.40202 80.0003 8.74223 80.0003 8.24739C80.0003 3.62885 76.3714 0 71.7529 0Z" fill="url(#paint0_linear)"/>

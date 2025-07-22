@@ -127,7 +127,7 @@
         maxlength="18"
         inputmode="numeric"
         :class="[
-      'w-full px-4 py-3 border rounded-md focus:outline-none text-[18]',
+      'w-full px-4 py-3 border rounded-md focus:outline-none text-[18] transition',
       props.isError
         ? 'border-red-500 focus:border-red-500'
         : 'border-gray-300 focus:border-red'

@@ -38,8 +38,8 @@
   }>();
 
   const genderOptions = [
-    { label: 'М', value: 'male' },
-    { label: 'Ж', value: 'female' }
+    { label: 'М', value: 'm' },
+    { label: 'Ж', value: 'f' }
   ];
 
   const lastNameError = ref('');

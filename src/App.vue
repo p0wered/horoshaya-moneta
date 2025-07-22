@@ -1,20 +1,22 @@
 <script setup lang="ts">
   import {onMounted} from "vue";
-  import {saveQueryToCookie, useInactivityTimer} from "@/utils/common.ts";
+  import {saveQueryToCookie, useInactivityTimer, useUtmSource} from "@/utils/common.ts";
   import Footer from "@/components/Footer/Footer.vue";
+  import {useRoute} from "vue-router";
+  import Header from "@/components/Header/Header.vue";
+
+  const route = useRoute();
 
   useInactivityTimer();
 
   onMounted(() => {
     saveQueryToCookie();
+    useUtmSource();
   })
-
-  //TODO накинуть transition на инпуты
 </script>
 
 <template>
-  <main>
-    <RouterView/>
-    <Footer/>
-  </main>
+  <Header/>
+  <RouterView/>
+  <Footer :short="route.name !== 'Home'"/>
 </template>

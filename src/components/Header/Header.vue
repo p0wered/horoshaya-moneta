@@ -28,11 +28,11 @@ const showPhoneDropdown = ref(false);
             @mouseleave="showEmailDropdown = false"
         >
           <a
-            class="flex gap-2.5 items-center cursor-pointer"
+            class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
             :href="`tel:${$config[domain].email}`"
           >
             <IconEmail/>
-            <p class="font-medium">
+            <p class="font-medium text-[16px]">
               {{ $config[domain].email }}
             </p>
           </a>
@@ -46,11 +46,11 @@ const showPhoneDropdown = ref(false);
             @mouseleave="showPhoneDropdown = false"
         >
           <a
-              class="flex gap-2.5 items-center cursor-pointer"
+              class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
               :href="`tel:${$config[domain].phoneNumber}`"
           >
             <IconPhone/>
-            <p class="font-medium">
+            <p class="font-medium text-[16px]">
               {{ $config[domain].phoneNumber }}
             </p>
           </a>

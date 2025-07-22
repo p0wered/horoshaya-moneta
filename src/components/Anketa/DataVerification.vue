@@ -23,7 +23,7 @@
 
     intervalId = setInterval(() => {
       if (progressBarValue.value < 100) {
-        progressBarValue.value += 1; // Increment by 10%
+        progressBarValue.value += 1;
       } else {
         clearInterval(intervalId as number);
         intervalId = null;
@@ -53,7 +53,7 @@
   <div class="mb-4">
     <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
       <div
-          class="progress-inner bg-red h-full transition"
+          class="progress-inner bg-red h-full"
           :style="{ width: progressBarValue + '%' }"
       />
     </div>
@@ -64,3 +64,9 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+ .progress-inner{
+   transition: .1s;
+ }
+</style>

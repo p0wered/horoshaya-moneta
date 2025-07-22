@@ -4,7 +4,7 @@
   import { addDays, addMonths, addYears } from 'date-fns';
   import { formatCurrency, formatDate, formatLoanPeriod, mapSliderValueToPeriod } from '@/utils/format';
   import { createDefaultCalculations, saveCalculations } from '@/utils/session';
-  import { useUtmSource } from '@/utils/utm.ts';
+  import { useUtmSource } from '@/utils/common.ts';
 
   import ButtonGradient from "@/components/Common/Buttons/ButtonGradient.vue";
   import Separator from "@/components/Separator.vue";
@@ -22,6 +22,7 @@
 
   const router = useRouter();
   const route = useRoute();
+  const domain = window.location.origin;
 
   const { amount, period } = createDefaultCalculations();
   const { hasUtmSource } = useUtmSource();
@@ -86,7 +87,7 @@
     <div :class="[small ? 'p-2 md:p-6' : 'p-8 md:p-[50px] md:pl-[80px]']">
 
       <div v-if="!small">
-        <h2 class="text-xl">Нужен займ?</h2>
+        <h2 class="text-xl font-bold">Нужен займ?</h2>
         <p class="mt-4 text-md">Получи первый займ прямо сейчас на карту</p>
       </div>
 
@@ -162,12 +163,13 @@
         </div>
       </div>
 
-      <div v-if="!small" class="mt-10 text-center text-black/50 text-[12px]">
-        <p>
+      <div v-if="!small" class="mt-10 text-black/50 text-[12px]">
+        <p class="mb-2">
           Сервис осуществляет подбор микрозаймов между лицом, желающим оформить займ, и кредитными учреждениями
         </p>
         <p v-if="!hasUtmSource">
-          Вы оформляете подписку стоимостью 3000 руб. каждые 30 дней, с регулярностью попыток списания 1 раз в день
+          Вы оформляете подписку стоимостью {{ $config[domain].sum }} руб. каждые 30 дней,
+          с регулярностью попыток списания 1 раз в день
         </p>
       </div>
     </div>

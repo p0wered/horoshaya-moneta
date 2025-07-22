@@ -5,13 +5,20 @@ import HomeView from '@/views/HomeView.vue'
 import Anketa from '@/views/Anketa.vue'
 import Companys from "@/views/Companys.vue";
 import Unsubscribe from "@/views/Unsubscribe.vue";
+import Deeplink from "@/views/Deeplink.vue";
 
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        name: 'HomeView',
+        name: 'Home',
         component: HomeView,
         meta: { titleKey: '/' },
+    },
+    {
+        path: '/unsubscribe',
+        name: 'Unsubscribe',
+        component: Unsubscribe,
+        meta: { titleKey: '/unsubscribe' },
     },
     {
         path: '/apply',
@@ -25,11 +32,12 @@ const routes: RouteRecordRaw[] = [
         component: Companys,
         meta: { titleKey: '/apply/companys' },
     },
+
     {
-        path: '/unsubscribe',
-        name: 'Unsubscribe',
-        component: Unsubscribe,
-        meta: { titleKey: '/unsubscribe' },
+        path: '/apply/deeplink',
+        name: 'Deeplink',
+        component: Deeplink,
+        meta: { titleKey: '/deeplink' },
     },
 ]
 
