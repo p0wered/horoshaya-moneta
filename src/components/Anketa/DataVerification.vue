@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
 
-  const {leadId} = defineProps<{
-    leadId: string;
-  }>();
+  // TODO решить что с этим
+  // const {leadId} = defineProps<{
+  //   leadId: string;
+  // }>();
 
   const emit = defineEmits<{
     (e: 'verification-complete'): void;

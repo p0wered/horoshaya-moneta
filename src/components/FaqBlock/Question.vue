@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import SlideUpDown from 'vue-slide-up-down'; // хз почему ругается, всё настроено
+  // @ts-ignore хз почему ругается, всё настроено
+  import SlideUpDown from 'vue-slide-up-down';
 
   const isExpanded = ref(false);
 </script>

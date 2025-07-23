@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const props = defineProps({
+  const {show} = defineProps({
     show: {
       type: Boolean,
       default: false,
