@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
   import InputString from "@/components/Common/Inputs/InputString.vue";
   import InputDate from "@/components/Common/Inputs/InputDate.vue";
   import InputEmail from "@/components/Common/Inputs/InputEmail.vue";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
   import InputPassport from "@/components/Common/Inputs/InputPassport.vue";
   import InputDate from "@/components/Common/Inputs/InputDate.vue";
   import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";

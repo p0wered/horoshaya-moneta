@@ -1,321 +1,281 @@
-<script lang="ts" setup>
-import { computed, ref, onMounted, getCurrentInstance } from "vue";
-import { useRoute } from "vue-router";
-import { getCookie, setCookie, sendMetrika } from "@/utils/common";
-import { formatPlaceId, injectAdsfinScript } from "@/utils/adsfin";
-import offers_data from "@/offers/offers_data.ts"; // Mock data
+<script setup lang="ts">
+  import { ref, onMounted, computed } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { getCookie } from '@/utils/common.ts';
+  import offersData from '@/offers/offers_data.ts';
+  import CompanysCard from '@/components/CompanysCard.vue';
+  import LoadingSpinner from "@/components/LoadingSpinner.vue";
+  import TgBotImage from '../assets/images/companys/tg-bot.svg';
+  import VkBotImage from '../assets/images/companys/vk-bot.svg';
 
-// --- Components ---
-import CompanyCardWrapper from "../components/CompanyCardWrapper.vue";
-import LinksSocialNetworks from "../components/LinksSocialNetworks.vue";
-
-// --- Type Definitions ---
-interface Offer {
-  logo: string;
-  name: string;
-  max_loan: string;
-  offer_type: string;
-  partner_id: string;
-  percentage: string;
-  variant_id: string;
-  loan_length_max: string;
-  loan_length_min: string;
-  approved_age_max: string;
-  approved_age_min: string;
-  is_first_nopercentage: string;
-  id: string;
-  link: string;
-}
-
-interface SavedCalculations {
-  amount: number;
-  period: number;
-  isWeeklyPeriod: boolean;
-}
-
-// --- Vue Router Initialization ---
-const route = useRoute();
-
-// --- Accessing Global $config ---
-const app = getCurrentInstance();
-const $config = computed(() => app?.appContext.config.globalProperties.$config || {});
-const currentDomain = window.location.origin;
-
-// --- Reactive State ---
-const offers = ref<Offer[]>([]);
-const visitedOffers = ref<Record<string, number>>({});
-
-// --- Data from Session Storage (Saved Calculations) ---
-const savedCalculations = computed<SavedCalculations>(() => {
-  const data = sessionStorage.getItem('savedCalculations');
-  return data ? JSON.parse(data) : { amount: 0, period: 0, isWeeklyPeriod: false };
-});
-
-const loanAmountFormatted = computed(() => {
-  return savedCalculations.value.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-});
-
-// --- Data from Local Storage (fullNameString) ---
-const firstName = ref(localStorage.getItem('firstName') || '');
-const patronymic = ref(localStorage.getItem('patronymic') || '');
-
-const fullNameString = computed(() => {
-  return firstName.value && patronymic.value ? `${firstName.value} ${patronymic.value},` : null;
-});
-
-// --- URL Parameter Handling ---
-const urlParams = computed(() => new URLSearchParams(route.query as Record<string, string>));
-const uid = computed(() => urlParams.value.get("uid") ?? "");
-const type = computed(() => urlParams.value.get("type"));
-const noSqueezeParam = computed(() => urlParams.value.get("no_squeeze"));
-const activationParam = computed(() => urlParams.value.get("activation"));
-const fromIframeParam = computed(() => urlParams.value.get("from_iframe"));
-
-// --- URL Utility Functions ---
-function removeURLParameter(url: string, parameter: string): string {
-  const urlObj = new URL(url);
-  urlObj.searchParams.delete(parameter);
-  return urlObj.toString();
-}
-
-// --- Adsfin Places for Script Injection ---
-const adsfinPlaces = {
-  over: "144422707724035113",
-  top: "144422628920269113",
-  center: "144422644547013110",
-  bottom: "144422666282942119",
-} as const;
-
-// --- Component Initialization Logic (onMounted) ---
-onMounted(async () => {
-  console.log('Current Domain Config:', $config.value[currentDomain]); // For debugging
-
-  window.scrollTo(0, 0);
-
-  if (noSqueezeParam.value === "1") {
-    setCookie("no_squeeze", "1", 7);
+  interface Offer {
+    id: string
+    logo: string
+    name: string
+    max_loan: string
+    offer_type: string
+    partner_id: string
+    percentage: string
+    variant_id: string
+    loan_length_max: string
+    loan_length_min: string
+    approved_age_max: string
+    approved_age_min: string
+    link: string
   }
 
-  if (activationParam.value === "1") {
-    sendMetrika("activation_success");
+  interface ApiResponse {
+    offers: Offer[]
+    checkers: number[]
+    user: { status: string }
+    tracking_active: string | null
   }
 
-  if (fromIframeParam.value !== null) {
-    if (window.top) { // Safe check for window.top
-      const newLink = removeURLParameter(window.location.href, "from_iframe");
-      window.top.location.replace(newLink);
-    } else {
-      console.warn("window.top is not accessible, cannot redirect from iframe.");
-    }
-    return;
-  } else {
-    if (activationParam.value === "1") {
-      handleActivationPostback(uid.value);
-    }
-  }
+  const route = useRoute();
+  const router = useRouter();
+  const loading = ref(true);
+  const error = ref('');
+  const offers = ref<Offer[]>([]);
+  const clickedOffers = ref(new Set<string>());
+  const displayFullName = ref<string>('');
 
-  loadOffers();
+  const sortedOffers = computed(() => {
+    const notClicked = offers.value.filter(offer => !clickedOffers.value.has(offer.id));
+    const clicked = offers.value.filter(offer => clickedOffers.value.has(offer.id));
+    return [...notClicked, ...clicked]
+  })
 
-  for (const placeId of Object.values(adsfinPlaces)) {
-    injectAdsfinScript(placeId);
-  }
-});
-
-// --- Handle Postback After Activation ---
-async function handleActivationPostback(currentUid: string): Promise<void> {
-  const setVerify = new FormData();
-  setVerify.append("status", "addCard");
-  setVerify.append("key", "BVmP2UpftWzUWmCTMXY9CMGkGq8n7cNCDvHDXahj9BzjDRZfFpKFghbAGQF5");
-  setVerify.append("lead_id", currentUid);
-
-  try {
-    const siteId = $config.value[currentDomain]?.siteId;
-    if (!siteId) {
-      console.error("Site ID not found in config for current domain.");
-      sendMetrika("postback_fail");
-      return;
-    }
-
-    const response = await fetch(`https://api.mfo-0.ru/set-verify?site_id=${siteId}`, {
-      method: "POST",
-      body: setVerify,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    sendMetrika("postback_success");
-  } catch (error) {
-    console.error("Error sending postback:", error);
-    sendMetrika("postback_fail");
-  }
-}
-
-// --- Load and Sort Offers ---
-async function loadOffers(): Promise<void> {
-  const requestData = new FormData();
-
-  let vid = 81;
-  switch (type.value) {
-    case "double":
-      vid = 84;
-      break;
-    case "comebacker":
-      vid = 82;
-      break;
-    case "overloaded":
-      vid = 83;
-      break;
-  }
-  requestData.append("vid", vid.toString());
-
-  const utmSource = getCookie("utm_source") || "";
-  const utmWeb = getCookie("web_id") || "";
-
-  requestData.append(
-      "additional_utms",
-      JSON.stringify({
-        utm_source: utmSource,
-        utm_web: utmWeb,
-      })
-  );
-
-  requestData.append("uid", uid.value);
-
-  const visitedOffersCookie = getCookie("visitedOffers");
-  visitedOffers.value = visitedOffersCookie ? JSON.parse(visitedOffersCookie) : {};
-
-  try {
-    const response = await fetch(`https://api.mfo-0.ru/offers?v=2.0`, {
-      method: "POST",
-      body: requestData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-
-    if (responseData.offers && responseData.offers.length > 0) {
-      layoutOffers(responseData.offers);
-    } else {
-      console.warn("API вернул пустой список офферов, используем моковые данные.");
-      layoutOffers(offers_data.offers as Offer[]); // Corrected
-    }
-  } catch (error) {
-    console.error("Error fetching offers from API:", error);
-    layoutOffers(offers_data.offers as Offer[]); // Corrected
-  }
-}
-
-function layoutOffers(offersList: Offer[]): void {
-  const groupedOffers: Offer[][] = [];
-  for (let i = 0; i < offersList.length; i += 6) {
-    groupedOffers.push(offersList.slice(i, i + 6));
-  }
-
-  groupedOffers.forEach((group) => {
-    group.sort((a, b) => {
-      const aVisited = visitedOffers.value[a.id] ? Number(visitedOffers.value[a.id]) : 0;
-      const bVisited = visitedOffers.value[b.id] ? Number(visitedOffers.value[b.id]) : 0;
-
-      const timeComparison = aVisited - bVisited;
-      if (timeComparison !== 0) {
-        return timeComparison;
-      }
-
-      return offersList.indexOf(a) - offersList.indexOf(b);
-    });
+  const displayItems = computed(() => {
+    return sortedOffers.value.map(offer => ({ type: 'offer', ...offer }));
   });
 
-  offers.value = groupedOffers.flat();
-}
+  const getVitrinaFromType = (type: string | null): number => {
+    let vid = 63;
+
+    switch (type) {
+      case "double":
+        vid = 61;
+        break;
+      case "comebacker":
+        vid = 59;
+        break;
+      case "overloaded":
+        vid = 64;
+        break;
+    }
+
+    return vid;
+  }
+
+  const getAdditionalUtms = (): string => {
+    const utmSource = getCookie('utm_source') || '';
+    const utmWeb = getCookie('utm_web') || '';
+
+    return JSON.stringify({
+      utm_source: utmSource,
+      utm_web: utmWeb
+    })
+  }
+
+  const fetchOffers = async (): Promise<void> => {
+    try {
+      const uid = route.query.uid as string || '';
+      const type = route.query.type as string;
+      const vid = getVitrinaFromType(type);
+      const additionalUtms = getAdditionalUtms();
+
+      const formData = new FormData();
+      formData.append('vid', vid.toString());
+      formData.append('additional_utms', additionalUtms);
+      formData.append('uid', uid);
+
+      const response = await fetch('https://zaimgod.ru/offers?v=2.0', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: ApiResponse = await response.json()
+
+      if (data.offers && data.offers.length > 0) {
+        offers.value = data.offers;
+      } else {
+        offers.value = offersData.offers || [];
+      }
+    } catch (err) {
+      console.error('Ошибка при загрузке офферов:', err);
+      try {
+        offers.value = offersData.offers || []
+      } catch (localErr) {
+        error.value = 'Не удалось загрузить предложения';
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  const handleOfferClick = (offerId: string): void => {
+    clickedOffers.value.add(offerId);
+    // Сохраняем в localStorage для постоянства между сессиями
+    const clicked = Array.from(clickedOffers.value);
+    localStorage.setItem('clickedOffers', JSON.stringify(clicked));
+  }
+
+  const loadClickedOffers = (): void => {
+    try {
+      const saved = localStorage.getItem('clickedOffers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        clickedOffers.value = new Set(parsed);
+      }
+    } catch (err) {
+      console.error('Ошибка при загрузке кликнутых офферов:', err);
+    }
+  }
+
+  const sendActivationRequest = async (): Promise<void> => {
+    try {
+      const uid = route.query.uid as string || getCookie('lead_id') || '';
+
+      const formData = new FormData()
+      formData.append('lead_id', uid);
+      formData.append('status', 'addCard');
+      formData.append('key', 'BVmP2UpftWzUWmCTMXY9CMGkGq8n7cNCDvHDXahj9BzjDRZfFpKFghbAGQF5');
+
+      await fetch('https://zaimgod.ru/set-verify?site_id=10', {
+        method: 'POST',
+        body: formData
+      })
+    } catch (err) {
+      console.error('Ошибка при отправке активации:', err)
+    }
+  }
+
+  const removeFromIframeParam = (): void => {
+    const currentQuery = { ...route.query };
+
+    if ('from_iframe' in currentQuery) {
+      delete currentQuery.from_iframe;
+      router.replace({ query: currentQuery })
+    }
+  }
+
+  onMounted(async () => {
+    const savedFirstName = localStorage.getItem('first_name');
+    const savedPatronymic = localStorage.getItem('patronymic');
+
+    if (savedFirstName) {
+      displayFullName.value = savedFirstName;
+    }
+
+    if (savedPatronymic) {
+      displayFullName.value = `${displayFullName.value} ${savedPatronymic}`.trim();
+    }
+
+    loadClickedOffers();
+    removeFromIframeParam();
+
+    if (route.query.activation === '1') {
+      await sendActivationRequest();
+    }
+
+    await fetchOffers();
+  });
 </script>
 
 <template>
-  <div class="flex flex-col gap-7 py-7 px-0 min-h-[calc(100vh_-_100px)] pb-52">
-    <div v-if="type">
-      <ins :id="formatPlaceId(adsfinPlaces.over)"></ins>
+  <div class="min-h-screen bg-white md:pb-24">
+
+    <div class="
+      background-block
+      min-h-[32rem] md:min-h-[65vh]
+      p-8 flex
+      flex-col items-center
+      bg-blue-50/50"
+    >
+      <div class="mt-10 md:mt-18">
+        <p
+          v-if="displayFullName"
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
+          {{displayFullName}}, поздравляем!
+        </p>
+
+        <p
+          v-else
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
+          Поздравляем!
+        </p>
+
+        <h1 class="md:text-xl text-[24px] max-w-3xl font-medium text-center mb-12 text-gray-800">
+          Одновременно подайте не менее 5 заявок в указанные ниже организации.
+        </h1>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-7 items-center w-full max-w-7xl mx-auto px-4 md:px-0">
-      <div class="flex flex-col items-center mb-7 text-center">
-        <h2 v-if="fullNameString" class="mb-6 text-xl font-bold text-gray-800">
-          {{ fullNameString }}
-        </h2>
-        <h3 v-if="fullNameString && savedCalculations.amount" class="text-base">
-          Вам предварительно одобрено
-          <span class="font-bold text-red-500">{{ loanAmountFormatted }} &#8381;</span>
-        </h3>
-        <h3 v-else-if="!fullNameString && savedCalculations.amount" class="text-base">
-          Вам предварительно одобрено
-          <span class="font-bold text-red-500">{{ loanAmountFormatted }} &#8381;</span>
-        </h3>
+    <div class="container mx-4 md:mx-auto p-4 mt-[-12rem] bg-white md:rounded-3xl shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
+      <div v-if="loading" class="flex justify-center items-center py-20">
+        <LoadingSpinner/>
       </div>
-      <p class="text-base text-gray-700">
-        Для получения денег подайте заявки в следующие компании:
-      </p>
 
-      <p v-if="$config[currentDomain]">
-        **{{ $config[currentDomain].type }} {{ $config[currentDomain].legalEntity }}**,
-        <br>
-        ОГРНИП
-        **{{ $config[currentDomain].individualEntrepreneurNumber }}**,
-        <br>
-        ИНН
-        **{{ $config[currentDomain].inn }}**
-      </p>
+      <div v-else-if="error" class="text-center py-20">
+        <p class="text-red-500 text-lg">{{ error }}</p>
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <template v-for="item in displayItems" :key="item.id">
+          <CompanysCard
+              :offer="item"
+              :is-clicked="clickedOffers.has(item.id)"
+              @offer-clicked="handleOfferClick"
+          />
+        </template>
+      </div>
     </div>
 
-    <ul class="flex flex-col gap-7 w-full max-w-7xl mx-auto px-4 md:px-0">
-      <li v-if="offers.slice(0, 6).length > 0">
-        <p class="ml-0 md:ml-12 mb-3 text-lg font-bold text-gray-800">Выгодные условия</p>
-        <div>
-          <CompanyCardWrapper
-              :data="offers.slice(0, 6)"
-              :slide_vitrina="false"
-              :with_ad="false"
-          />
-        </div>
-      </li>
-
-      <div>
-        <ins :id="formatPlaceId(adsfinPlaces.top)"></ins>
+    <div class="container flex flex-col justify-center items-center mt-18">
+      <p class="text-black/60 mb-6">
+        Не подошли условия?
+      </p>
+      <div class="flex gap-3">
+        <a
+            class="p-3 border border-[#1d94d3] rounded-3xl"
+            href="https://t.me/zaym_help_bot"
+            target="_blank"
+        >
+          <img
+              class="w-[254px] h-[76px]"
+              :src="TgBotImage"
+              alt="Telegram"
+          >
+        </a>
+        <a
+            class="p-3 border border-[#0077ff] rounded-3xl"
+            href="https://vk.me/finsos"
+            target="_blank"
+        >
+          <img
+              class="w-[254px] h-[76px]"
+              :src="VkBotImage"
+              alt="Telegram"
+          >
+        </a>
       </div>
+    </div>
 
-      <li v-if="offers.slice(6, 12).length > 0">
-        <p class="ml-0 md:ml-12 mb-3 text-lg font-bold text-gray-800">Онлайн-займ на карту</p>
-        <div>
-          <CompanyCardWrapper
-              :data="offers.slice(6, 12)"
-              :slide_vitrina="false"
-              :with_ad="false"
-          />
-        </div>
-      </li>
-
-      <li v-if="offers.slice(12, 18).length > 0">
-        <p class="ml-0 md:ml-12 mb-3 text-lg font-bold text-gray-800">Только паспорт</p>
-        <div>
-          <CompanyCardWrapper
-              :data="offers.slice(12, 18)"
-              :slide_vitrina="false"
-              :with_ad="true"
-          />
-        </div>
-      </li>
-
-      <div>
-        <ins :id="formatPlaceId(adsfinPlaces.center)"></ins>
-      </div>
-
-      <LinksSocialNetworks />
-    </ul>
   </div>
 </template>
 
 <style scoped>
-/* Styles here */
+ .background-block{
+   background-image:
+     url("../assets/images/companys/companys-overlay.png"),
+     url("../assets/images/companys/companys-banner.png");
+   background-repeat: no-repeat, no-repeat;
+   background-size: 100%, contain;
+   background-position-y: bottom;
+   background-position-x: center;
+ }
 </style>

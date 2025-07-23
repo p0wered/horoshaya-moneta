@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits, onMounted, watch } from "vue";
+  import { onMounted, watch } from "vue";
   import { useAutoDocs } from "@/utils/auto-docs.ts";
   import { setCookie } from "@/utils/common.ts";
   import CheckboxPrimary from "@/components/Common/Checkboxes/CheckboxPrimary.vue";

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import {defineProps} from "vue";
   import { useAutoDocs } from "@/utils/auto-docs.ts";
   import { useUtmSource} from "@/utils/common.ts";
   import ApplyFooterSection from "@/components/Footer/ApplyFooterSection.vue";
@@ -57,34 +56,12 @@
           </div>
         </section>
 
-        <section v-if="!short"
-          class="
-            flex
-            justify-between
-            max-w-4xl
-            m-auto
-            pt-8"
-        >
-          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
-            <IconFooterVisa/>
-          </div>
-          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
-            <IconFooterMasterCard/>
-          </div>
-          <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
-            <IconFooterMir/>
-          </div>
-        </section>
-
         <section class="
-          flex
-          justify-between
-          items-center
+          flex justify-between items-center gap-6
           border-b border-gray-dark
           py-10
           flex-col
-          md:flex-row
-          gap-6"
+          md:flex-row"
         >
           <div class="text-center md:text-left">
             <p class="text-sm text-white/50">Телефон для связи</p>
@@ -114,6 +91,18 @@
               from-red
               to-red-light
           ">{{ $config[domain].email }}</a>
+          </div>
+
+          <div class="flex gap-4">
+            <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+              <IconFooterVisa/>
+            </div>
+            <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+              <IconFooterMasterCard/>
+            </div>
+            <div class="flex items-center justify-center bg-white w-[100px] h-[70px] rounded-md">
+              <IconFooterMir/>
+            </div>
           </div>
         </section>
 

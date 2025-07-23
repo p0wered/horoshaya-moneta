@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, ref, onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { configProxy } from "@/config";
   import axios from 'axios';
   import PieChart from "@/components/PieChart.vue";

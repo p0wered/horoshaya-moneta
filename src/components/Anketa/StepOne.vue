@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits, ref } from 'vue';
+  import { ref } from 'vue';
   import { useUtmSource } from "@/utils/common.ts";
   import { validatePhone } from '@/utils/validators';
   import InputPhone from "@/components/Common/Inputs/InputPhone.vue";

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { defineProps, defineEmits } from 'vue';
   import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
   interface Props {
