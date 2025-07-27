@@ -19,18 +19,6 @@
     step: 1,
   });
 
-  const indexToDays = (index: number): number => {
-    const { unit, value } = mapSliderValueToPeriod(index);
-    switch (unit) {
-      case 'day':   return value;
-      case 'month': return value * 30;
-      case 'year':  return value * 365;
-    }
-  };
-
-  const minDays = computed(() => indexToDays(props.min));
-  const maxDays = computed(() => indexToDays(props.max));
-
   const emit = defineEmits(['update:modelValue', 'change']);
   const slider = ref<HTMLElement | null>(null);
 
