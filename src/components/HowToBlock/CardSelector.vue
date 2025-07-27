@@ -7,12 +7,12 @@
   import IconCardIconUmoney from '@/assets/icons/card/IconUmoney.vue';
   import IconCardIconBankTransfer from '@/assets/icons/card/IconBankTransfer.vue';
 
-  import cardVisa from '@/assets/images/howto/card_visa_lg.png';
-  import cardContact from '@/assets/images/howto/card_contact_lg.png';
-  import cardCorona from '@/assets/images/howto/card_korona_lg.png';
-  import cardMastercard from '@/assets/images/howto/card_mc_lg.png';
-  import cardUmoney from '@/assets/images/howto/card_u_lg.png';
-  import cardBank from '@/assets/images/howto/card_bank_lg.png';
+  import cardVisa from '@/assets/images/howto/card_visa_lg.svg';
+  import cardContact from '@/assets/images/howto/card_contact_lg.svg';
+  import cardCorona from '@/assets/images/howto/card_korona_lg.svg';
+  import cardMastercard from '@/assets/images/howto/card_mc_lg.svg';
+  import cardUmoney from '@/assets/images/howto/card_u_lg.svg';
+  import cardBank from '@/assets/images/howto/card_bank_lg.svg';
 
   interface Card {
     title: string;

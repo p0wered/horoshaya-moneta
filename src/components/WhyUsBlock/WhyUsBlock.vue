@@ -2,9 +2,9 @@
   import type { Feature } from './_types';
   import WhyFeature from './Feature.vue';
   import BlockTitle from '@/components/BlockTitle.vue';
-  import WhyMoneyImg from '@/assets/images/why/why_money.png';
-  import WhyFastImg from '@/assets/images/why/why_fast.png';
-  import WhyProlongationImg from '@/assets/images/why/why_prolongation.png';
+  import WhyMoneyImg from '@/assets/images/why/why_money.svg';
+  import WhyFastImg from '@/assets/images/why/why_fast.svg';
+  import WhyProlongationImg from '@/assets/images/why/why_prolongation.svg';
 
   const features: Feature[] = [
     {
