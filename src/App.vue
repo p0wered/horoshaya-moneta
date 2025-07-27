@@ -45,7 +45,7 @@
 </script>
 
 <template>
-  <Header/>
+  <Header v-if="route.name !== 'Home'"/>
 
   <template v-if="isLoading">
     <PageLoading/>

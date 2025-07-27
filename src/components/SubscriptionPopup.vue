@@ -137,14 +137,14 @@ const {
                   </p>
                   <div class="flex flex-col sm:flex-row gap-3">
                     <a
-                      href="tel:+7-800-000-00-00"
+                      :href="$config.phoneNumber"
                       class="inline-flex items-center gap-2 px-4 py-3 bg-white border border-green-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-200 text-sm sm:text-base font-medium text-green-700"
                     >
                       <Phone class="w-4 h-4"/>
                       {{ $config.phoneNumber }}
                     </a>
                     <a
-                      href="mailto:support@example.com"
+                      :href="$config.email"
                       class="inline-flex items-center gap-2 px-4 py-3 bg-white border border-green-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-200 text-sm sm:text-base font-medium text-green-700"
                     >
                       <Mail class="w-4 h-4"/>

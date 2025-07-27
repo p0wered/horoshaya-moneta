@@ -203,6 +203,7 @@ export const saveQuery = (cookieDays: number = 30) => {
     ];
 
     const localStorageKeys = [
+        'phone',
         'first_name',
         'last_name',
         'patronymic',

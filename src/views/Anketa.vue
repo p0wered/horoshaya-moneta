@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted, watch } from "vue";
-  import { useUtmSource } from '@/utils/common.ts';
+  import { useUtmSource, setCookie, getCookie } from '@/utils/common.ts';
+  import { configProxy } from "@/config.ts";
   import ApplyProgress from "@/components/Anketa/ApplyProgress.vue";
   import RecommendationBlock from "@/components/RecommendationBlock.vue";
   import ContactInfo from "@/components/Anketa/ContactInfo.vue";
@@ -49,11 +50,21 @@
         step.value = parsedStep;
       }
     }
+
+    if (!formData.lead_id) {
+      const savedLeadId = getCookie('lead_id');
+      if (savedLeadId) {
+        formData.lead_id = savedLeadId;
+      }
+    }
   });
 
   watch(step, (newStep) => {
     localStorage.setItem('currentAnketaStep', String(newStep));
   });
+
+  const getLocalStorageItem = (key: string) => localStorage.getItem(key) || '';
+  const getCookieItem = (key: string) => getCookie(key) || '';
 
   // временно для отладки
   const simulateApiRequest = (data: any, stepNum: number) => {
@@ -75,18 +86,94 @@
     });
   };
 
+  const sendStepOneRequest = async (data: typeof formData) => {
+    const apiUrl = `https://zaimgod.ru/new-user?site_id=${configProxy.siteId}`;
+    const requestFormData = new FormData();
+
+    requestFormData.append('phone', data.phone);
+    requestFormData.append('agreement_time', getCookieItem('agreement_time'));
+    requestFormData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+    requestFormData.append('timezone_offset', String(-new Date().getTimezoneOffset() / 60));
+
+    const localStorageKeys = ['first_name', 'last_name', 'patronymic', 'email', 'birthday'];
+    localStorageKeys.forEach(key => {
+      const value = getLocalStorageItem(key);
+      if (value) {
+        requestFormData.append(key, value);
+      }
+    });
+
+    const cookieParamsToAppend = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6', 'sub7', 'click_id', 'web_id'];
+    cookieParamsToAppend.forEach(key => {
+      const value = getCookieItem(key);
+      if (value) {
+        requestFormData.append(key, value);
+      }
+    });
+
+    const utmSourceValue = getCookieItem('utm_source');
+    if (utmSourceValue) {
+      requestFormData.append('source', utmSourceValue);
+    } else {
+      requestFormData.append('source', '');
+    }
+
+    let loanAmount = 0;
+    let loanPeriod = 0;
+
+    const savedCalculations = sessionStorage.getItem('savedCalculations');
+    if (savedCalculations) {
+      try {
+        const parsedLoanData = JSON.parse(savedCalculations);
+        if (parsedLoanData && typeof parsedLoanData === 'object') {
+          if (typeof parsedLoanData.amount === 'number') {
+            loanAmount = parsedLoanData.amount;
+          }
+          if (typeof parsedLoanData.period === 'number') {
+            loanPeriod = parsedLoanData.period;
+          }
+        }
+      } catch (e) {
+        console.error('Ошибка парсинга savedCalculations из sessionStorage:', e);
+      }
+    }
+
+    requestFormData.append('loan_sum', String(loanAmount));
+    requestFormData.append('loan_length', String(loanPeriod));
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        body: requestFormData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Ошибка HTTP, статус: ${response.status}, ответ: ${errorText}`);
+      }
+
+      const responseData = await response.json();
+
+      if (responseData.status === 'success' && responseData.lead_id) {
+        setCookie('lead_id', responseData.lead_id, 30);
+        formData.lead_id = responseData.lead_id;
+        return { success: true, message: 'Шаг 1 успешно обработан', lead_id: responseData.lead_id };
+      } else {
+        throw new Error(`Апи вернул ошибку: ${JSON.stringify(responseData)}`);
+      }
+    } catch (error) {
+      console.error('Ошибка в sendStepOneRequest:', error);
+      throw new Error(`Ошибка API на шаге 1: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
   const handleStepSubmit = async () => {
     isLoading.value = true;
     let dataToSend: any = {};
 
     try {
       if (step.value === 1) {
-        dataToSend = {
-          phone: formData.phone,
-          userAgreementOne: formData.userAgreementOne,
-          userAgreementTwo: formData.userAgreementTwo,
-        };
-        await simulateApiRequest(dataToSend, 1);
+        await sendStepOneRequest(formData);
         step.value++;
       } else if (step.value === 2) {
         dataToSend = {
