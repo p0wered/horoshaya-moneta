@@ -42,7 +42,7 @@
             gap-8"
         >
           <div class="flex gap-4 flex-wrap justify-between">
-            <a class="
+            <router-link class="
               border border-gray-border-dark
               rounded-lg
               px-3 sm:px-7 py-3
@@ -50,9 +50,9 @@
               hover:bg-neutral-800
               transition
               "
-              href="/unsubscribe">
+              to="/unsubscribe">
               Отписаться от услуг
-            </a>
+            </router-link>
           </div>
         </section>
 
