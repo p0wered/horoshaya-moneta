@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
-  import { mapSliderValueToPeriod } from "@/utils/format.ts";
+  import { onMounted, ref } from 'vue';
   import noUiSlider from 'nouislider/dist/nouislider';
   import 'nouislider/dist/nouislider.css';
 
