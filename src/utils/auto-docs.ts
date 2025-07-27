@@ -11,9 +11,8 @@ interface DocumentMap {
 }
 
 /** Получение переменных с автодоками **/
-export function useAutoDocs(domain: string) {
-    const domainConfig = configProxy[domain]
-    const documents: DocumentItem[] = domainConfig?.documents || []
+export function useAutoDocs() {
+    const documents: DocumentItem[] = configProxy?.documents || []
 
     const documentMap = computed<DocumentMap>(() => {
         return documents.reduce((acc, doc) => {

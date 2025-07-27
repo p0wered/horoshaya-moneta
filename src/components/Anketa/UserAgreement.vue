@@ -3,9 +3,7 @@
   import { useAutoDocs } from "@/utils/auto-docs.ts";
   import { setCookie } from "@/utils/common.ts";
   import CheckboxPrimary from "@/components/Common/Checkboxes/CheckboxPrimary.vue";
-
-  const domain = window.location.origin;
-
+  
   const props = defineProps<{
     checkboxOne: boolean;
     checkboxTwo: boolean;
@@ -80,7 +78,7 @@
     paidSubAgreementPdf,
     recurrPaymentsAgreementPdf,
     cardDataAgreementPdf,
-  } = useAutoDocs(domain)
+  } = useAutoDocs()
 </script>
 
 <template>
@@ -107,7 +105,7 @@
     <a v-if="recurrPaymentsAgreementPdf" :href="recurrPaymentsAgreementPdf" class="underline hover:text-black/40"> Соглашение на применение Рекуррентных платежей</a>,
     <a v-if="paidSubAgreementPdf" :href="paidSubAgreementPdf" class="underline hover:text-black/40"> Соглашение на оформление платной подписки</a>.
     Подтверждаю, что не являюсь получателем единовременных и/или регулярных денежных выплат, предусмотренных
-    Указами Президента РФ. Стоимость услуги {{ $config[domain].sum }} рублей. Оплата производится раз в 30 дней.
+    Указами Президента РФ. Стоимость услуги {{ $config.sum }} рублей. Оплата производится раз в 30 дней.
     Осознаю, что оплата услуг не гарантирует получение займа.
   </CheckboxPrimary>
 </template>

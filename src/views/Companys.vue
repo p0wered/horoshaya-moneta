@@ -2,7 +2,7 @@
   import { ref, onMounted, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getCookie } from '@/utils/common.ts';
-  import offersData from '@/offers/offers_data.ts';
+  import offersData from '@/offers_data.ts';
   import CompanysCard from '@/components/CompanysCard.vue';
   import LoadingSpinner from "@/components/LoadingSpinner.vue";
   import TgBotImage from '../assets/images/companys/tg-bot.svg';
@@ -119,7 +119,6 @@
 
   const handleOfferClick = (offerId: string): void => {
     clickedOffers.value.add(offerId);
-    // Сохраняем в localStorage для постоянства между сессиями
     const clicked = Array.from(clickedOffers.value);
     localStorage.setItem('clickedOffers', JSON.stringify(clicked));
   }
@@ -136,7 +135,7 @@
     }
   }
 
-  const sendActivationRequest = async (): Promise<void> => {
+  const sendPostback = async (): Promise<void> => {
     try {
       const uid = route.query.uid as string || getCookie('lead_id') || '';
 
@@ -179,7 +178,12 @@
     removeFromIframeParam();
 
     if (route.query.activation === '1') {
-      await sendActivationRequest();
+
+      if (!localStorage.getItem("conversionSuccess")) {
+        localStorage.setItem('conversionSuccess', Date.now().toString());
+      }
+
+      await sendPostback();
     }
 
     await fetchOffers();
@@ -209,7 +213,7 @@
           Поздравляем!
         </p>
 
-        <h1 class="md:text-xl text-[24px] max-w-3xl font-medium text-center mb-12 text-gray-800">
+        <h1 class="md:text-xl text-[24px] max-w-3xl font-semibold text-center mb-12 text-gray-800">
           Одновременно подайте не менее 5 заявок в указанные ниже организации.
         </h1>
       </div>
@@ -221,7 +225,7 @@
       </div>
 
       <div v-else-if="error" class="text-center py-20">
-        <p class="text-red-500 text-lg">{{ error }}</p>
+        <p class="text-red-600 text-lg">{{ error }}</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

@@ -6,7 +6,6 @@ import IconEmail from "@/assets/icons/IconEmail.vue";
 import IconPhone from "@/assets/icons/IconPhone.vue";
 import HeaderDropdown from "@/components/Header/HeaderDropdown.vue";
 
-const domain = window.location.origin;
 const showEmailDropdown = ref(false);
 const showPhoneDropdown = ref(false);
 </script>
@@ -29,11 +28,11 @@ const showPhoneDropdown = ref(false);
         >
           <a
             class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
-            :href="`tel:${$config[domain].email}`"
+            :href="`tel:${$config.email}`"
           >
             <IconEmail/>
             <p class="font-medium text-[16px]">
-              {{ $config[domain].email }}
+              {{ $config.email }}
             </p>
           </a>
 
@@ -47,11 +46,11 @@ const showPhoneDropdown = ref(false);
         >
           <a
               class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
-              :href="`tel:${$config[domain].phoneNumber}`"
+              :href="`tel:${$config.phoneNumber}`"
           >
             <IconPhone/>
             <p class="font-medium text-[16px]">
-              {{ $config[domain].phoneNumber }}
+              {{ $config.phoneNumber }}
             </p>
           </a>
 

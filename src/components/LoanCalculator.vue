@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
-  import { useRouter, useRoute } from "vue-router";
+  import { useRouter } from "vue-router";
   import { addDays, addMonths, addYears } from 'date-fns';
   import {
     formatCurrency,
@@ -10,7 +10,7 @@
     sliderIndexToDays
   } from '@/utils/format';
   import { createDefaultCalculations, saveCalculations } from '@/utils/session';
-  import { useUtmSource } from '@/utils/common.ts';
+  import { navigateToApply, useUtmSource } from '@/utils/common.ts';
 
   import ButtonGradient from "@/components/Common/Buttons/ButtonGradient.vue";
   import Separator from "@/components/Separator.vue";
@@ -19,7 +19,7 @@
 
   withDefaults(
       defineProps<{
-        small?: boolean
+        small?: boolean,
       }>(),
       {
         small: false,
@@ -27,8 +27,6 @@
   );
 
   const router = useRouter();
-  const route = useRoute();
-  const domain = window.location.origin;
 
   const { amount, period } = createDefaultCalculations();
   const { hasUtmSource } = useUtmSource();
@@ -40,13 +38,6 @@
 
   const LOAN_PERIOD_SLIDER_MIN = 1;
   const LOAN_PERIOD_SLIDER_MAX = 42;
-
-  const navigateToApply = () => {
-    router.push({
-      path: '/apply',
-      query: { ...route.query }
-    });
-  };
 
   const loanAmountFormatted = computed(() =>
       formatCurrency(loanAmount.value)
@@ -124,7 +115,7 @@
 
       <ButtonGradient
           :class="['w-full', 'mt-10', small ? 'rounded-full': 'rounded-lg']"
-          @click="navigateToApply"
+          @click="() => navigateToApply(router)"
       >
         Оформить заявку
       </ButtonGradient>
@@ -175,7 +166,7 @@
           Сервис осуществляет подбор микрозаймов между лицом, желающим оформить займ, и кредитными учреждениями
         </p>
         <p v-if="!hasUtmSource">
-          Вы оформляете подписку стоимостью {{ $config[domain].sum }} руб. каждые 30 дней,
+          Вы оформляете подписку стоимостью {{ $config.sum }} руб. каждые 30 дней,
           с регулярностью попыток списания 1 раз в день
         </p>
       </div>

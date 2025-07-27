@@ -11,7 +11,6 @@
     short?: boolean;
   }>();
 
-  const domain = window.location.origin;
   const { hasUtmSource } = useUtmSource();
 
   const {
@@ -21,7 +20,7 @@
     paidSubAgreementPdf,
     recurrPaymentsAgreementPdf,
     cardDataAgreementPdf,
-  } = useAutoDocs(domain)
+  } = useAutoDocs()
 
 </script>
 
@@ -66,7 +65,7 @@
           <div class="text-center md:text-left">
             <p class="text-sm text-white/50">Телефон для связи</p>
             <a
-              :href="`tel:${$config[domain].phoneNumber}`"
+              :href="`tel:${$config.phoneNumber}`"
               class="
               mt-2
               text-[22px]
@@ -75,13 +74,13 @@
               bg-gradient-to-b
             from-red
             to-red-light
-          ">{{ $config[domain].phoneNumber }}</a>
+          ">{{ $config.phoneNumber }}</a>
           </div>
 
           <div class="text-center md:text-right">
             <p class="text-sm text-white/50 md:text-left">E-mail</p>
             <a
-              :href="`mailto:${$config[domain].email}`"
+              :href="`mailto:${$config.email}`"
               class="
               mt-2
               text-[22px]
@@ -90,7 +89,7 @@
               bg-gradient-to-b
               from-red
               to-red-light
-          ">{{ $config[domain].email }}</a>
+          ">{{ $config.email }}</a>
           </div>
 
           <div class="flex gap-4">
@@ -108,24 +107,24 @@
 
         <section v-if="!short" class="py-10 text-white/50 text-xs">
           <p>
-            {{ $config[domain].type }} {{ $config[domain].legalEntity }},
+            {{ $config.type }} {{ $config.legalEntity }},
 
             ОГРНИП
-            {{ $config[domain].individualEntrepreneurNumber }},
+            {{ $config.individualEntrepreneurNumber }},
 
             ИНН
-            {{ $config[domain].inn }}
+            {{ $config.inn }}
           </p>
-          <p>Юридический адрес: {{ $config[domain].address }}</p>
+          <p>Юридический адрес: {{ $config.address }}</p>
 
           <p class="mt-4">
-            {{ $config[domain].type }} {{ $config[domain].legalEntity }}
+            {{ $config.type }} {{ $config.legalEntity }}
 
             является оператором персональных данных под номером
-            {{ $config[domain].rknNumber }}
+            {{ $config.rknNumber }}
 
             Приказ
-            {{ $config[domain].order }}.
+            {{ $config.order }}.
 
             Выдача займов у партнеров осуществляется в российских рублях, на банковский счет, наличными или на карту,
             гражданам Российской Федерации. Сервис не относится к финансовым учреждениям, не является кредитором или банком
@@ -192,11 +191,11 @@
           </h4>
 
           <h4 class="font-bold mt-1">
-            Услуги по договору оплачиваются в размере не более {{ $config[domain].sum }} руб. в месяц. Оплата
-            производится частями от 99 руб. до {{ $config[domain].sum }} руб. каждые 30 дней, с регулярностью попыток
+            Услуги по договору оплачиваются в размере не более {{ $config.sum }} руб. в месяц. Оплата
+            производится частями от 99 руб. до {{ $config.sum }} руб. каждые 30 дней, с регулярностью попыток
             списания 1 раз в день. Подробная информация в указана в договоре. Для отказа от продления деактивируйте
             карту в личном кабинете сайта. Активация сервиса не гарантирует вам получение займа. Для отключения СМС
-            уведомлений напишите на почту {{ $config[domain].email }}.
+            уведомлений напишите на почту {{ $config.email }}.
           </h4>
 
           <p class="font-bold mt-4">

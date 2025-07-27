@@ -38,11 +38,13 @@
       const parsedStep = parseInt(savedStep);
 
       if (parsedStep >= 4) {
-        if (hasUtmSource) {
+
+        if (hasUtmSource.value) {
           step.value = 2;
         } else {
           step.value = 3;
         }
+
       } else {
         step.value = parsedStep;
       }

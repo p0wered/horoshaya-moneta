@@ -9,17 +9,30 @@
 
   const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
+    (e: 'wrong-layout'): void;
   }>();
 
   function onInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    let value = target.value;
+    let value: string;
 
     const cyrillicRegex = /[^а-яА-ЯёЁ\s]/g;
-    value = value.replace(cyrillicRegex, '');
+
+    if (cyrillicRegex.test(target.value)) {
+      emit('wrong-layout');
+    }
+    value = target.value.replace(cyrillicRegex, '');
 
     target.value = value;
     emit('update:modelValue', value);
+  }
+
+  function onKeypress(event: KeyboardEvent) {
+    const char = event.key;
+      if (!/[а-яА-ЯёЁ\s]/.test(char)) {
+        event.preventDefault();
+        emit('wrong-layout');
+      }
   }
 </script>
 
@@ -32,6 +45,7 @@
       :placeholder="props.placeholder"
       :maxlength="props.maxLength"
       @input="onInput"
+      @keypress="onKeypress"
       :class="[
       'w-full px-4 py-3 border rounded-md focus:outline-none text-[18] transition',
       props.isError

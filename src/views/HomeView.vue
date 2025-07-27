@@ -71,7 +71,7 @@
 
     <div class="application__bottom-wrapper md:bg-red mx-auto py-12 px-3 md:px-12 mb-16 rounded-3xl container">
       <div class="application__bottom max-w-[500px] mx-auto bg-white shadow-xl md:py-10 py-6 px-3 rounded-3xl text-center">
-        <h3 class="text-[24px] md:text-xl font-medium">Заполните анкету</h3>
+        <h3 class="text-[24px] md:text-xl font-semibold">Заполните анкету</h3>
         <p class="text-md text-black/50 mt-2">И получите индивидуальное предложение</p>
 
         <LoanCalculator :small="true"/>

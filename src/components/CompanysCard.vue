@@ -3,6 +3,7 @@
     class="
       bg-white
       rounded-2xl
+      flex flex-col justify-between
       hover:shadow-xl transition
       p-4"
     :class="
@@ -22,12 +23,12 @@
       </div>
     </div>
 
-    <div class="space-y-2 mb-4 px-3">
+    <div class="space-y-2 mb-4 px-2">
       <div class="flex gap-1">
         <p class="text-gray-700">
           Процентная ставка:
           <span class="font-semibold text-green-600">
-            {{ offer.percentage }} %
+            {{ offer.percentage }}%
           </span>
         </p>
 
@@ -37,7 +38,7 @@
         <p class="text-gray-700">
           Вам предодобрено:
         </p>
-        <p class="font-semibold text-green-600">
+        <p class="font-semibold text-green-600 -tracking-wide">
           до {{ formatAmount(offer.max_loan) }} ₽
         </p>
       </div>
@@ -45,7 +46,7 @@
       <div class="flex gap-1">
         <p class="text-gray-700">
           Срок:
-          <span class="font-semibold text-blue-500">
+          <span class="font-semibold text-blue-500 -tracking-wide">
             до {{ offer.loan_length_max }} дней
           </span>
         </p>
@@ -54,7 +55,7 @@
       <div class="flex gap-1">
         <p class="text-gray-700">
           Возраст:
-          <span class="font-semibold text-gray-700">
+          <span class="font-semibold text-gray-700 -tracking-wide">
             от {{ offer.approved_age_min }} до {{ offer.approved_age_max }} лет
           </span>
         </p>

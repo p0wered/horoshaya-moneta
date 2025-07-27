@@ -58,9 +58,13 @@ export function loadConfig(): Promise<void> {
 }
 
 export const configProxy = new Proxy(reactive(configData), {
-  get(target, domain: string) {
-    if (!loaded) console.warn(`⚠️ Config для "${domain}" ещё не загружен!`);
-    return Reflect.get(target, domain) ?? {}
+  get(target, key: string) {
+    if (!loaded) console.warn(`⚠️ Config для "${key}" ещё не загружен!`);
+
+    const domain = window.location.origin;
+    const domainConfig = Reflect.get(target, domain) ?? {};
+
+    return Reflect.get(domainConfig, key);
   }
 })
 

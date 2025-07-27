@@ -10,7 +10,6 @@
     loanPeriod: number;
   }>();
 
-  const domain = window.location.origin;
   const paymentLink = ref<string | null>(null);
   const hasError = ref(false);
   const showTerminal = ref(false);
@@ -44,7 +43,7 @@
       return;
     }
 
-    const apiUrl = `https://payment.mfo-0.ru/web_form?sid=${configProxy[domain].siteId}&uid=${uid}&cid=${configProxy[domain].cid}`;
+    const apiUrl = `https://payment.mfo-0.ru/web_form?site=${configProxy.siteId}&order=${uid}`;
 
     try {
       const response = await axios.get(apiUrl);
@@ -117,7 +116,7 @@
   </div>
 
   <p class="font-bold text-md mb-4 text-center">
-    Оформление подписки и активация платной подписки по вашей карте стоимостью {{ $config[domain].sum }} рублей в месяц.
+    Оформление подписки и активация платной подписки по вашей карте стоимостью {{ $config.sum }} рублей в месяц.
   </p>
 
   <div class="mb-2">
@@ -125,7 +124,7 @@
       <p class="text-sm text-black">
         Сервис осуществляет подбор микрозаймов между лицом, желающим оформить займ, и кредитными учреждениями.
         <span class="font-bold">
-          Вы оформляете подписку стоимостью {{ $config[domain].sum }} рублей в месяц согласно тарифам.
+          Вы оформляете подписку стоимостью {{ $config.sum }} рублей в месяц согласно тарифам.
         </span>
         Для отписки воспользуйтесь кнопкой отписки на главной странице сайта или на странице
         <a href="/unsubscribe">отписки.</a>

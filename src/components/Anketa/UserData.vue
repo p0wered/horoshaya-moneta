@@ -55,7 +55,7 @@
     lastName: 'last_name',
     firstName: 'first_name',
     patronymic: 'patronymic',
-    birthdayDate: 'birthday_date',
+    birthdayDate: 'birthday',
     email: 'email',
     gender: 'gender',
   };
@@ -93,7 +93,7 @@
       try {
         calculations = JSON.parse(savedCalculationsRaw);
       } catch (e) {
-        console.error("Failed to parse savedCalculations from sessionStorage:", e);
+        console.error("Не удалось спрасить значения суммы и срока займа из sessionStorage:", e);
       }
     }
 
@@ -186,8 +186,8 @@
     if (field === 'patronymic') patronymicError.value = '';
     if (field === 'email') emailError.value = '';
   };
-  const clearDateError = (field: 'birthday_date') => {
-    if (field === 'birthday_date') birthdayDateError.value = '';
+  const clearDateError = (field: 'birthday') => {
+    if (field === 'birthday') birthdayDateError.value = '';
   };
   const clearNumericError = (field: 'loanAmount' | 'loanPeriod') => {
     if (field === 'loanAmount') loanAmountError.value = '';
@@ -211,6 +211,7 @@
           :error-message="lastNameError"
           @blur="lastNameError = validateRequiredString(props.formData.lastName)"
           @input="clearStringError('last_name')"
+          @wrong-layout="lastNameError = 'Переключите раскладку'"
       />
     </div>
     <div class="w-full">
@@ -222,6 +223,7 @@
           :error-message="firstNameError"
           @blur="firstNameError = validateRequiredString(props.formData.firstName)"
           @input="clearStringError('first_name')"
+          @wrong-layout="lastNameError = 'Переключите раскладку'"
       />
     </div>
     <div class="w-full">
@@ -233,6 +235,7 @@
           :error-message="patronymicError"
           @blur="patronymicError = validateRequiredString(props.formData.patronymic)"
           @input="clearStringError('patronymic')"
+          @wrong-layout="lastNameError = 'Переключите раскладку'"
       />
     </div>
   </div>
@@ -245,7 +248,7 @@
           :is-error="!!birthdayDateError"
           :error-message="birthdayDateError"
           @blur="birthdayDateError = validateDate(props.formData.birthdayDate)"
-          @input="clearDateError('birthday_date')"
+          @input="clearDateError('birthday')"
       />
     </div>
     <div class="w-full">

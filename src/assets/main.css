@@ -38,7 +38,6 @@
 
   --height-order: 741px;
   --container-xl: 1360px;
-  --font-family-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
   --text-xs: 12px;
   --leading-xs: 130%;
   --text-sm: 14px;
@@ -50,7 +49,7 @@
   --text-xl: 30px;
   --text-2xl: 50px;
   --text-3xl: 62px;
-  --leading-3xl: 68.2px;
+  --leading-3xl: 68px;
 }
 
 @layer utilities {
@@ -90,6 +89,6 @@ body {
   padding: 0;
   height: 100%;
   background-color: var(--color-gray);
-  font-family: var(--font-family-sans), sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 18px;
 }

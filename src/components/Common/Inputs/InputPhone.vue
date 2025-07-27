@@ -11,7 +11,7 @@
     (e: 'update:modelValue', value: string): void;
   }>();
 
-  const localStorageKey = 'userPhone';
+  const localStorageKey = 'phone';
 
   const inputRef = ref<HTMLInputElement>();
   const digits = ref('');

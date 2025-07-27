@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import {useRoute, useRouter} from "vue-router";
-  import {ref, onMounted} from "vue";
+  import { useRoute, useRouter } from "vue-router";
+  import { ref, onMounted } from "vue";
+  import { navigateToApply } from "@/utils/common.ts";
   import IconVerify from "@/assets/icons/IconVerify.vue";
   import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
 
-  const router = useRouter();
   const route = useRoute();
+  const router = useRouter();
 
   const firstName = ref('');
   const lastName = ref('');
@@ -16,32 +17,10 @@
   const isWeeklyPeriod = ref(false);
 
   onMounted(() => {
-    const queryFirstName = route.query.first_name as string;
-    const queryLastName = route.query.last_name as string;
-    const queryPatronymic = route.query.patronymic as string;
-    const queryPhone = route.query.phone as string;
-    const querySum = route.query.sum as string;
-    const queryLoanLength = route.query.loan_length as string;
-
-    if (queryFirstName) {
-      firstName.value = queryFirstName;
-      localStorage.setItem('first_name', queryFirstName);
-    }
-
-    if (queryLastName) {
-      lastName.value = queryLastName;
-      localStorage.setItem('last_name', queryLastName);
-    }
-
-    if (queryPatronymic) {
-      patronymic.value = queryPatronymic;
-      localStorage.setItem('patronymic', queryPatronymic);
-    }
-
-    if (queryPhone) {
-      phone.value = queryPhone;
-      localStorage.setItem('phone', queryPhone);
-    }
+    firstName.value = localStorage.getItem('first_name') || '';
+    lastName.value = localStorage.getItem('last_name') || '';
+    patronymic.value = localStorage.getItem('patronymic') || '';
+    phone.value = localStorage.getItem('phone') || '';
 
     let loanData = {
       amount: 25000,
@@ -57,6 +36,9 @@
         console.error('Ошибка парсинга данных из sessionStorage:', e);
       }
     }
+
+    const querySum = route.query.sum as string;
+    const queryLoanLength = route.query.loan_length as string;
 
     if (querySum) {
       loanData.amount = parseInt(querySum, 10) || loanData.amount;
@@ -77,13 +59,6 @@
     const now = new Date();
     return now.toLocaleDateString('ru-RU');
   };
-
-  const navigateToApply = () => {
-    router.push({
-      path: '/apply',
-      query: { ...route.query }
-    });
-  };
 </script>
 
 <template>
@@ -100,12 +75,12 @@
     >
       <div>
         <h4 v-if="firstName && lastName"
-            class="font-bold text-[26px] mb-1">
+            class="font-bold text-[30px] mb-1">
           {{ firstName }} {{ lastName }}
         </h4>
 
         <div class="flex gap-2 mb-4 items-center">
-          <p class="font-medium">
+          <p class="font-semibold">
             Ваша заявка одобрена нашим сервисом!
           </p>
           <IconVerify/>
@@ -113,7 +88,7 @@
 
         <p class="mb-4 mr-8">
           Нам уже передали вашу заявку и
-          <span class="font-bold text-red">
+          <span class="font-semibold text-red">
           мы автоматически обработали и согласовали её.
         </span>
         </p>
@@ -163,7 +138,7 @@
 
         <ButtonPrimary
             label="Завершить оформление"
-            @click="navigateToApply"
+            @click="() => navigateToApply(router)"
         />
       </div>
 
