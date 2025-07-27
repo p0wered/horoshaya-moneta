@@ -1,5 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('fonts/Roboto-VariableFont.ttf') format('ttf');
+  font-weight: 200 800;
+  font-display: swap;
+  font-style: normal;
+}
 
 @theme {
   --color-white: #fff;

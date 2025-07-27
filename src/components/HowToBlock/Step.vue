@@ -18,6 +18,7 @@
           :src="imageUrl"
           :alt="title"
           :title="title"
+          loading="lazy"
           class="mx-auto lg:mx-0"
       />
       <h3 class="text-l mt-7">{{ title }}</h3>

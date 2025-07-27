@@ -56,7 +56,7 @@
     </ul>
 
     <div class="flex-1 text-center mt-10 lg:mt-0">
-      <img :src="cards[selectedCardIndex].src" class="mx-auto" alt="CardImage" />
+      <img :src="cards[selectedCardIndex].src" class="mx-auto" alt="CardImage" loading="lazy" />
       <p>Срок перевода занимает <span class="font-bold">до 10 минут</span></p>
     </div>
   </div>

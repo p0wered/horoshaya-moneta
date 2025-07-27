@@ -101,3 +101,12 @@ export function formatNumber(amount: number) {
 export function formatDate(date: Date, dateFormat: string) {
     return format(date, dateFormat, { locale: ru });
 }
+
+export function sliderIndexToDays(index: number): number {
+    const { unit, value } = mapSliderValueToPeriod(index);
+    switch (unit) {
+        case 'day':   return value;
+        case 'month': return value * 30;
+        case 'year':  return value * 365;
+    }
+}

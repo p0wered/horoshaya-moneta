@@ -3,9 +3,9 @@
   import { useUtmSource } from '@/utils/common.ts';
   import ApplyProgress from "@/components/Anketa/ApplyProgress.vue";
   import RecommendationBlock from "@/components/RecommendationBlock.vue";
-  import StepOne from "@/components/Anketa/StepOne.vue";
-  import StepTwo from "@/components/Anketa/StepTwo.vue";
-  import StepThree from "@/components/Anketa/StepThree.vue";
+  import ContactInfo from "@/components/Anketa/ContactInfo.vue";
+  import UserData from "@/components/Anketa/UserData.vue";
+  import PassData from "@/components/Anketa/PassData.vue";
   import DataVerification from "@/components/Anketa/DataVerification.vue";
   import PaymentForm from "@/components/Anketa/PaymentForm.vue";
 
@@ -38,7 +38,11 @@
       const parsedStep = parseInt(savedStep);
 
       if (parsedStep >= 4) {
-        step.value = 3;
+        if (hasUtmSource) {
+          step.value = 2;
+        } else {
+          step.value = 3;
+        }
       } else {
         step.value = parsedStep;
       }
@@ -153,23 +157,23 @@
     md:rounded-2xl"
   >
     <ApplyProgress
-        v-if="step <= 3"
+        v-if="(step <= 2 && hasUtmSource) || step <= 3"
         :step="step"
     />
-    <StepOne
+    <ContactInfo
         v-if="step === 1"
         v-model:form-data="formData"
         :is-loading="isLoading"
         @submit-step="handleStepSubmit"
     />
-    <StepTwo
+    <UserData
         v-else-if="step === 2"
         v-model:form-data="formData"
         :is-loading="isLoading"
         @submit-step="handleStepSubmit"
         @prev-step="handlePrevStep"
     />
-    <StepThree
+    <PassData
         v-else-if="step === 3 && !hasUtmSource"
         v-model:form-data="formData"
         :is-loading="isLoading"
@@ -182,7 +186,7 @@
         @verification-complete="handleVerificationComplete"
     />
     <PaymentForm
-        v-else-if="step === 5"
+        v-else-if="(step === 4 && hasUtmSource) || step === 5"
         :loan-amount="formData.loanAmount"
         :loan-period="formData.loanPeriod"
     />

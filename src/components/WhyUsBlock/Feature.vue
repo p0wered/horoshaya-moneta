@@ -14,6 +14,7 @@
         :src="feature.imageUrl"
         :alt="feature.title"
         :title="feature.title"
+        loading="lazy"
         class="w-[72px] md:w-[82px]"
     />
     <figcaption class="pl-8">

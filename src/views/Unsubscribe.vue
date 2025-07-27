@@ -1,11 +1,10 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue';
+  import { sendMetrika } from '@/utils/common';
   import axios from 'axios';
-  import Header from '@/components/Header/Header.vue';
   import InputPhone from '@/components/Common/Inputs/InputPhone.vue';
   import InputCardNumber from '@/components/Common/Inputs/InputCardNumber.vue';
   import UnsubscribeModal from '@/components/UnsubscribeModal.vue';
-  import { sendMetrika } from '@/utils/common';
   import RecommendationBlock from "@/components/RecommendationBlock.vue";
 
   const phoneUnsubscribe = ref('');
@@ -125,8 +124,6 @@
 </script>
 
 <template>
-  <Header/>
-
   <div class="md:p-12 p-5 bg-white md:border-1 border-b-1 border-gray-200 max-w-3xl mx-auto md:my-8 mb-4 md:rounded-2xl">
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">Отписаться от платных услуг</h2>

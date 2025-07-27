@@ -194,18 +194,18 @@
       min-h-[32rem] md:min-h-[65vh]
       p-8 flex
       flex-col items-center
-      bg-blue-50/50"
+      bg-blue-100"
     >
       <div class="mt-10 md:mt-18">
         <p
           v-if="displayFullName"
-          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-700">
           {{displayFullName}}, поздравляем!
         </p>
 
         <p
           v-else
-          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-700">
           Поздравляем!
         </p>
 
@@ -216,8 +216,8 @@
     </div>
 
     <div class="container mx-4 md:mx-auto p-4 mt-[-12rem] bg-white md:rounded-3xl shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <LoadingSpinner/>
+      <div v-if="loading" class="min-h-60 flex items-center justify-center">
+        <LoadingSpinner color="#f91e45" size="64px"/>
       </div>
 
       <div v-else-if="error" class="text-center py-20">

@@ -5,6 +5,8 @@
   import {useRoute} from "vue-router";
   import Header from "@/components/Header/Header.vue";
 
+  // TODO Редирект верификации без lead_id
+
   const route = useRoute();
 
   useInactivityTimer();

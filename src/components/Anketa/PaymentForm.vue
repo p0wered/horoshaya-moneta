@@ -92,7 +92,7 @@
     </div>
   </div>
 
-  <div class="flex justify-between mb-5">
+  <div class="flex justify-between items-center gap-4 mb-5">
     <p>Сводка доступных условий</p>
     <div class="flex gap-4">
       <div class="flex items-center gap-2">
@@ -106,8 +106,8 @@
     </div>
   </div>
 
-  <div class="flex justify-between mb-8">
-    <div v-for="(chart, index) in chartData" :key="index" class="flex flex-col items-center">
+  <div class="grid md:grid-cols-4 grid-cols-2">
+    <div v-for="(chart, index) in chartData" :key="index" class="flex flex-col items-center mb-6">
       <PieChart
           :percentage="chart.percentage"
           :stroke-width="14"
@@ -141,6 +141,7 @@
         'min-h-32 mb-3',
         'py-8 px-4',
         'rounded-md',
+        'text-center',
         'bg-gray-100',
         hasError
         ? 'text-red-500'

@@ -2,7 +2,13 @@
   import { computed, ref, watch } from 'vue';
   import { useRouter, useRoute } from "vue-router";
   import { addDays, addMonths, addYears } from 'date-fns';
-  import { formatCurrency, formatDate, formatLoanPeriod, mapSliderValueToPeriod } from '@/utils/format';
+  import {
+    formatCurrency,
+    formatDate,
+    formatLoanPeriod,
+    mapSliderValueToPeriod,
+    sliderIndexToDays
+  } from '@/utils/format';
   import { createDefaultCalculations, saveCalculations } from '@/utils/session';
   import { useUtmSource } from '@/utils/common.ts';
 
@@ -74,7 +80,8 @@
   });
 
   const updateSavedCalculations = () => {
-    saveCalculations(loanAmount.value, loanPeriod.value, isWeeksPeriod.value);
+    const totalDays = sliderIndexToDays(loanPeriod.value);
+    saveCalculations(loanAmount.value, totalDays, isWeeksPeriod.value);
   };
 
   watch([loanAmount, loanPeriod], () => {

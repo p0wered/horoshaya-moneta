@@ -19,6 +19,7 @@
         :src="item.photoUrl"
         :alt="item.name"
         :title="item.name"
+        loading="lazy"
     />
     <figcaption>
       <div class="flex">
