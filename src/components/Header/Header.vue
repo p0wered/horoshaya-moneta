@@ -11,7 +11,7 @@ const showPhoneDropdown = ref(false);
 </script>
 
 <template>
-  <header class="relative bg-white border-b-1 border-b-gray-200">
+  <header class="relative bg-white border-b-1 border-b-gray-200 max-h-[76px]">
     <div class="container flex justify-between items-center p-4">
       <img
           :src="LogoBlack"
@@ -20,9 +20,9 @@ const showPhoneDropdown = ref(false);
           alt="Хорошая Монета"
       >
 
-      <div class="flex md:gap-6 gap-1 md:flex-row flex-col">
+      <div class="flex md:gap-6 gap-1 md:flex-row flex-col items-end text-[13px] md:text-[16px]">
         <div
-            class="relative"
+            class="relative "
             @mouseenter="showEmailDropdown = true"
             @mouseleave="showEmailDropdown = false"
         >
@@ -30,10 +30,10 @@ const showPhoneDropdown = ref(false);
             class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
             :href="`tel:${$config.email}`"
           >
-            <IconEmail/>
-            <p class="font-medium text-[16px]">
+            <p class="font-medium">
               {{ $config.email }}
             </p>
+            <IconEmail/>
           </a>
 
           <HeaderDropdown v-show="showEmailDropdown"/>
@@ -48,10 +48,10 @@ const showPhoneDropdown = ref(false);
               class="flex gap-2.5 items-center cursor-pointer hover:text-black/70 transition"
               :href="`tel:${$config.phoneNumber}`"
           >
-            <IconPhone/>
-            <p class="font-medium text-[16px]">
+            <p class="font-medium">
               {{ $config.phoneNumber }}
             </p>
+            <IconPhone/>
           </a>
 
           <HeaderDropdown v-show="showPhoneDropdown"/>

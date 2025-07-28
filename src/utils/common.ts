@@ -120,20 +120,6 @@ export function useUtmSource() {
 }
 
 /**
- * Отправляет reachGoal в Яндекс.Метрику
- * @param action название
- */
-export const sendMetrika = (action: string) => {
-    if (typeof window !== 'undefined' && typeof window.ym !== 'undefined') {
-        if (!import.meta.env.DEV) {
-            window.ym(93770064, 'reachGoal', action);
-        } else {
-            console.log('sendMetrika', action);
-        }
-    }
-}
-
-/**
  * Логика открытия витрины типа overloaded по таймеру
  * @param timeoutMs длительность таймера в миллисекундах
  */
@@ -248,3 +234,24 @@ export const saveQuery = (cookieDays: number = 30) => {
         setCookie('web_id', foundWebIdValue, cookieDays);
     }
 };
+
+/**
+ * Возвращает значения слайдеров из sessionStorage
+ */
+export const getLoanData = () => {
+    const savedCalculations = sessionStorage.getItem('savedCalculations');
+
+    if (!savedCalculations) return { amount: 50000, period: 30 };
+
+    try {
+        const parsedData = JSON.parse(savedCalculations);
+        return {
+            amount: typeof parsedData?.amount === 'number' ? parsedData.amount : 50000,
+            period: typeof parsedData?.period === 'number' ? parsedData.period : 30
+        };
+    } catch (error) {
+        console.error('Ошибка получения savedCalculations:', error);
+        return { amount: 50000, period: 30 };
+    }
+};
+

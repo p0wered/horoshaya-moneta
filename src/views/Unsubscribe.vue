@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { sendMetrika } from '@/utils/common';
   import axios from 'axios';
   import InputPhone from '@/components/Common/Inputs/InputPhone.vue';
   import InputCardNumber from '@/components/Common/Inputs/InputCardNumber.vue';
@@ -83,7 +82,6 @@
   async function unsubscribe() {
     closeUnsubscribeModal();
 
-    sendMetrika('try_unsubscribe');
     errorMessage.value = '';
     successMessage.value = '';
 
@@ -101,22 +99,18 @@
 
       if (response.status === 403) {
         errorMessage.value = 'Техническая ошибка. Перезагрузите страницу или напишите нам на почту.';
-        sendMetrika('fail_unsubscribe');
       } else {
         const data = typeof response.data === 'string'
             ? JSON.parse(response.data)
             : response.data;
         if (data.status === 'success') {
           successMessage.value = 'Вы успешно отписаны от системы';
-          sendMetrika('success_unsubscribe');
         } else {
           errorMessage.value = 'Мы не смогли найти активную подписку с такими данными. Пожалуйста, проверьте данные.';
-          sendMetrika('fail_unsubscribe');
         }
       }
     } catch {
       errorMessage.value = 'Техническая ошибка. Перезагрузите страницу или напишите нам на почту.';
-      sendMetrika('fail_unsubscribe');
     } finally {
       isLoading.value = false;
     }
@@ -142,7 +136,7 @@
     </div>
 
     <div v-if="errorMessage" class="mt-4 text-red">{{ errorMessage }}</div>
-    <div v-if="successMessage" class="mt-4 text-green-300">{{ successMessage }}</div>
+    <div v-if="successMessage" class="mt-4 text-green-600">{{ successMessage }}</div>
 
     <hr class="mt-12 mb-6 border-gray-300" />
 

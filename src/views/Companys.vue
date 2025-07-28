@@ -95,7 +95,7 @@
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP ошибка, статус: ${response.status}`);
       }
 
       const data: ApiResponse = await response.json()
@@ -195,7 +195,7 @@
 
     <div class="
       background-block
-      min-h-[32rem] md:min-h-[65vh]
+      min-h-[32rem] md:min-h-[70vh]
       p-8 flex
       flex-col items-center
       bg-blue-100"
@@ -203,13 +203,13 @@
       <div class="mt-10 md:mt-18">
         <p
           v-if="displayFullName"
-          class="md:text-[20px] font-medium text-center  mb-4 text-gray-700">
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
           {{displayFullName}}, поздравляем!
         </p>
 
         <p
           v-else
-          class="md:text-[20px] font-medium text-center  mb-4 text-gray-700">
+          class="md:text-[20px] font-medium text-center  mb-4 text-gray-800">
           Поздравляем!
         </p>
 

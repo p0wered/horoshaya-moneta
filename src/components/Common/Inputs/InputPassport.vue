@@ -69,7 +69,7 @@ import { ref, watch } from 'vue';
       : 'border-gray-300 focus:border-red'
     ]"
   />
-  <p v-if="props.isError && props.errorMessage" class="mt-1 text-sm text-red-500">
+  <p v-if="props.isError && props.errorMessage" class="mt-1 text-xs text-red-500">
     {{ props.errorMessage }}
   </p>
 </template>

@@ -21,7 +21,7 @@
 <template>
   <button
       :class="[
-        'p-4 w-full text-white rounded-lg transition font-bold',
+        'p-4 w-full text-white rounded-lg transition font-semibold',
         props.isLoading
           ? 'bg-red/50 hover:bg-red/50 cursor-default'
           : 'bg-red hover:bg-red-dark cursor-pointer'

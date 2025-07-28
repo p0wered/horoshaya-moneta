@@ -64,6 +64,8 @@
 
 <style scoped>
 .is-selected {
+  transition: .2s;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(105%);
 }
 </style>

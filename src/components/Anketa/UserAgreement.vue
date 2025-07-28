@@ -88,10 +88,28 @@
       :is-error="props.isErrorOne"
   >
     Заполняя заявку на сайте вы даете согласие со следующими условиями:
-    <a v-if="publicOfertaPdf" :href="publicOfertaPdf" class="underline hover:text-black/40">Публичная оферта</a> и
+    <a
+      v-if="publicOfertaPdf"
+      :href="publicOfertaPdf"
+      target="_blank"
+      class="underline hover:text-black/40">
+      Публичная оферта
+    </a> и
     <a>действующие тарифы</a>,
-    <a v-if="personalDataPoliticPdf" :href="personalDataPoliticPdf" class=" underline hover:text-black/40"> Политика обработки персональных данных</a>,
-    <a v-if="personalDataAgreementPdf" :href="personalDataAgreementPdf" class=" underline hover:text-black/40"> Согласие на обработку персональных данных</a>.
+    <a
+      v-if="personalDataPoliticPdf"
+      :href="personalDataPoliticPdf"
+      target="_blank"
+      class=" underline hover:text-black/40">
+      Политика обработки персональных данных
+    </a>,
+    <a
+      v-if="personalDataAgreementPdf"
+      :href="personalDataAgreementPdf"
+      target="_blank"
+      class=" underline hover:text-black/40">
+      Согласие на обработку персональных данных
+    </a>.
   </CheckboxPrimary>
 
   <CheckboxPrimary
@@ -101,9 +119,27 @@
       :is-error="props.isErrorTwo"
   >
     Заполняя заявку на сайте вы даете согласие со следующими условиями:
-    <a v-if="cardDataAgreementPdf" :href="cardDataAgreementPdf" class="underline hover:text-black/40"> Соглашение о хранении учётных данных владельцы карт</a>,
-    <a v-if="recurrPaymentsAgreementPdf" :href="recurrPaymentsAgreementPdf" class="underline hover:text-black/40"> Соглашение на применение Рекуррентных платежей</a>,
-    <a v-if="paidSubAgreementPdf" :href="paidSubAgreementPdf" class="underline hover:text-black/40"> Соглашение на оформление платной подписки</a>.
+    <a
+      v-if="cardDataAgreementPdf"
+      :href="cardDataAgreementPdf"
+      target="_blank"
+      class="underline hover:text-black/40">
+      Соглашение о хранении учётных данных владельцы карт
+    </a>,
+    <a
+      v-if="recurrPaymentsAgreementPdf"
+      :href="recurrPaymentsAgreementPdf"
+      target="_blank"
+      class="underline hover:text-black/40">
+      Соглашение на применение Рекуррентных платежей
+    </a>,
+    <a
+      v-if="paidSubAgreementPdf"
+      :href="paidSubAgreementPdf"
+      target="_blank"
+      class="underline hover:text-black/40">
+      Соглашение на оформление платной подписки
+    </a>.
     Подтверждаю, что не являюсь получателем единовременных и/или регулярных денежных выплат, предусмотренных
     Указами Президента РФ. Стоимость услуги {{ $config.sum }} рублей. Оплата производится раз в 30 дней.
     Осознаю, что оплата услуг не гарантирует получение займа.

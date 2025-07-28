@@ -28,13 +28,3 @@ export function saveCalculations(
         })
     );
 }
-
-export function getSavedCalculations(): CalculationData {
-    const savedCalculations = sessionStorage.getItem(CALC_KEY);
-
-    if (savedCalculations) {
-        return JSON.parse(savedCalculations);
-    }
-
-    return createDefaultCalculations();
-}

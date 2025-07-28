@@ -50,5 +50,6 @@
        rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%,
        transparent 75%, transparent);
    background-size: 1rem 1rem;
+   transition: .4s;
  }
 </style>

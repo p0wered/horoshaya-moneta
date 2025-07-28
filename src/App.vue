@@ -7,6 +7,9 @@
   import PageLoading from "@/components/PageLoading.vue";
   import SubscriptionPopup from "@/components/SubscriptionPopup.vue";
 
+  //TODO short anketa
+  //TODO agreement popup
+
   const route = useRoute();
   const router = useRouter();
   const { hasUtmSource } = useUtmSource();
@@ -57,6 +60,9 @@
         v-if="isPopupOpen"
         @close="isPopupOpen = false"
     />
-    <Footer :short="route.name !== 'Home'"/>
+    <Footer
+        v-if="route.name !== 'Deeplink'"
+        :short="route.name !== 'Home'"
+    />
   </template>
 </template>

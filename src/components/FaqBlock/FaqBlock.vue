@@ -40,7 +40,10 @@
       <FaqQuestion class="mt-[12px]" v-for="(question, index) in questions" :key="index">
         <h4 class="text-[16px] md:text-md font-medium">{{ question.title }}</h4>
         <template #description>
-          <p class="px-6 pb-4 pt-4 bg-gray-50" v-html="question.description"></p>
+          <p
+            class="px-6 pb-4 pt-4 border-t-1 border-gray-200 md:text-md text-sm text-black/80"
+            v-html="question.description"
+          />
         </template>
       </FaqQuestion>
     </section>

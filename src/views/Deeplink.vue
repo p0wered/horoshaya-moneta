@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from "vue-router";
   import { ref, onMounted } from "vue";
-  import { navigateToApply } from "@/utils/common.ts";
+  import { navigateToApply, getLoanData } from "@/utils/common.ts";
   import IconVerify from "@/assets/icons/IconVerify.vue";
   import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
 
@@ -14,7 +14,6 @@
   const phone = ref('');
   const amount = ref(0);
   const period = ref(0);
-  const isWeeklyPeriod = ref(false);
 
   onMounted(() => {
     firstName.value = localStorage.getItem('first_name') || '';
@@ -22,37 +21,32 @@
     patronymic.value = localStorage.getItem('patronymic') || '';
     phone.value = localStorage.getItem('phone') || '';
 
-    let loanData = {
-      amount: 25000,
-      period: 10,
-      isWeeklyPeriod: false
-    };
-
-    const existingLoanData = sessionStorage.getItem('savedCalculations');
-    if (existingLoanData) {
-      try {
-        loanData = JSON.parse(existingLoanData);
-      } catch (e) {
-        console.error('Ошибка парсинга данных из sessionStorage:', e);
-      }
-    }
+    let loanDataFromSession = getLoanData();
 
     const querySum = route.query.sum as string;
     const queryLoanLength = route.query.loan_length as string;
 
     if (querySum) {
-      loanData.amount = parseInt(querySum, 10) || loanData.amount;
+      const parsedQuerySum = parseInt(querySum, 10);
+      if (!isNaN(parsedQuerySum)) {
+        loanDataFromSession.amount = parsedQuerySum;
+      }
     }
 
     if (queryLoanLength) {
-      loanData.period = parseInt(queryLoanLength, 10) || loanData.period;
+      const parsedQueryPeriod = parseInt(queryLoanLength, 10);
+      if (!isNaN(parsedQueryPeriod)) {
+        loanDataFromSession.period = parsedQueryPeriod;
+      }
     }
 
-    sessionStorage.setItem('savedCalculations', JSON.stringify(loanData));
+    sessionStorage.setItem('savedCalculations', JSON.stringify({
+      amount: loanDataFromSession.amount,
+      period: loanDataFromSession.period
+    }));
 
-    amount.value = loanData.amount;
-    period.value = loanData.period;
-    isWeeklyPeriod.value = loanData.isWeeklyPeriod;
+    amount.value = loanDataFromSession.amount;
+    period.value = loanDataFromSession.period;
   });
 
   const getCurrentDate = () => {
@@ -64,9 +58,9 @@
 <template>
   <div class="md:h-screen">
     <div class="
-      h-[calc(100vh-84px)] md:h-auto
+      h-[calc(100vh-76px)] md:h-auto
       flex flex-col justify-between
-      px-6 py-14 md:px-8 md:pt-8 md:pb-8
+      px-6 pt-6 pb-14 md:px-8 md:pt-8 md:pb-8
       bg-white
       border-b-1 border-gray-200 md:border-1
       max-w-3xl mx-auto
@@ -116,7 +110,7 @@
           <p>
             Срок займа:
             <span class="font-bold">
-            {{ period }} {{ isWeeklyPeriod ? 'недель' : 'дней' }}
+            {{ period }} дней
           </span>
           </p>
           <p>

@@ -33,8 +33,8 @@
 
   const localStorageKeys: Record<keyof StepThreeFormData, string> = {
     seriesAndNumber: 'passportSeriesAndNumber',
-    subdivisionCode: 'passportSubdivisionCode',
-    issueDate: 'passportThreeIssueDate',
+    subdivisionCode: 'passportDepCode',
+    issueDate: 'passportIssueDate',
   };
 
   onMounted(() => {

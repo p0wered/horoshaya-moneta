@@ -66,6 +66,7 @@
   const clearAgreementOneError = () => {
     agreementOneError.value = '';
   };
+
   const clearAgreementTwoError = () => {
     agreementTwoError.value = '';
   };

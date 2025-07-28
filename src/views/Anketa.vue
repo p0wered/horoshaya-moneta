@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { ref, reactive, onMounted, watch } from "vue";
-  import { useUtmSource, setCookie, getCookie } from '@/utils/common.ts';
+  import { ref, reactive, onMounted, watch, computed } from "vue";
+  import {useUtmSource, setCookie, getCookie, getLoanData} from '@/utils/common.ts';
   import { configProxy } from "@/config.ts";
+  import axios from "axios";
   import ApplyProgress from "@/components/Anketa/ApplyProgress.vue";
   import RecommendationBlock from "@/components/RecommendationBlock.vue";
   import ContactInfo from "@/components/Anketa/ContactInfo.vue";
@@ -9,6 +10,17 @@
   import PassData from "@/components/Anketa/PassData.vue";
   import DataVerification from "@/components/Anketa/DataVerification.vue";
   import PaymentForm from "@/components/Anketa/PaymentForm.vue";
+
+  const localStorageKeys = {
+    step: 'currentAnketaStep',
+    passportSeriesAndNumber: 'passportSeriesAndNumber',
+    passportDepCode: 'passportDepCode',
+    passportIssueData: 'passportIssueDate'
+  } as const;
+
+  const userDataFields = ['first_name', 'last_name', 'patronymic', 'email', 'birthday'] as const;
+  const passDataFields = [...userDataFields, 'gender'] as const;
+  const cookieParams = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6', 'sub7', 'click_id', 'web_id'] as const;
 
   const { hasUtmSource } = useUtmSource();
   const isLoading = ref(false);
@@ -32,191 +44,175 @@
     lead_id: '',
   });
 
-  onMounted(() => {
-    const savedStep = localStorage.getItem('currentAnketaStep');
-
-    if (savedStep) {
-      const parsedStep = parseInt(savedStep);
-
-      if (parsedStep >= 4) {
-
-        if (hasUtmSource.value) {
-          step.value = 2;
-        } else {
-          step.value = 3;
-        }
-
-      } else {
-        step.value = parsedStep;
-      }
-    }
-
-    if (!formData.lead_id) {
-      const savedLeadId = getCookie('lead_id');
-      if (savedLeadId) {
-        formData.lead_id = savedLeadId;
-      }
+  const apiClient = axios.create({
+    baseURL: `https://zaimgod.ru/`,
+    timeout: 10000,
+    params: {
+      site_id: configProxy.siteId
     }
   });
 
-  watch(step, (newStep) => {
-    localStorage.setItem('currentAnketaStep', String(newStep));
+  interface ApiResponse {
+    status: string;
+    status_code: number;
+    lead_id: string;
+  }
+
+  const shouldShowProgress = computed(() =>
+      (step.value <= 2 && hasUtmSource.value) || step.value <= 3
+  );
+
+  const currentStepComponent = computed(() => {
+    if (step.value === 1) return 'ContactInfo';
+    if (step.value === 2) return 'UserData';
+    if (step.value === 3 && !hasUtmSource.value) return 'PassData';
+    if ((step.value === 3 && hasUtmSource.value) || step.value === 4) return 'DataVerification';
+    if ((step.value === 4 && hasUtmSource.value) || step.value === 5) return 'PaymentForm';
+    return null;
   });
 
-  const getLocalStorageItem = (key: string) => localStorage.getItem(key) || '';
-  const getCookieItem = (key: string) => getCookie(key) || '';
+  const getCookieItem = (key: string): string => getCookie(key) || '';
 
-  // временно для отладки
-  const simulateApiRequest = (data: any, stepNum: number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log(`Отправка данных на шаге ${stepNum}:`, data);
-        const success = Math.random() > 0.1;
-
-        if (success) {
-          if (stepNum === 1) {
-            formData.lead_id = `lead_${Date.now()}`;
-            console.log('Получен lead_id:', formData.lead_id);
-          }
-          resolve({ success: true, message: `Шаг ${stepNum} успешно обработан` });
-        } else {
-          reject(new Error(`Ошибка API на шаге ${stepNum}`));
-        }
-      }, 1000);
-    });
-  };
-
-  const sendStepOneRequest = async (data: typeof formData) => {
-    const apiUrl = `https://zaimgod.ru/new-user?site_id=${configProxy.siteId}`;
+  const createFormData = (additionalFields: Record<string, string> = {}) => {
     const requestFormData = new FormData();
+    const loanData = getLoanData();
 
-    requestFormData.append('phone', data.phone);
-    requestFormData.append('agreement_time', getCookieItem('agreement_time'));
-    requestFormData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
-    requestFormData.append('timezone_offset', String(-new Date().getTimezoneOffset() / 60));
+    const baseFields = {
+      phone: formData.phone,
+      lead_id: formData.lead_id,
+      agreement_time: getCookieItem('agreement_time'),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezone_offset: String(-new Date().getTimezoneOffset() / 60),
+      source: getCookieItem('utm_source'),
+      loan_sum: String(loanData.amount),
+      loan_length: String(loanData.period),
+      ...additionalFields
+    };
 
-    const localStorageKeys = ['first_name', 'last_name', 'patronymic', 'email', 'birthday'];
-    localStorageKeys.forEach(key => {
-      const value = getLocalStorageItem(key);
-      if (value) {
-        requestFormData.append(key, value);
-      }
+    Object.entries(baseFields).forEach(([key, value]) => {
+      if (value) requestFormData.append(key, value);
     });
 
-    const cookieParamsToAppend = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6', 'sub7', 'click_id', 'web_id'];
-    cookieParamsToAppend.forEach(key => {
+    cookieParams.forEach(key => {
       const value = getCookieItem(key);
-      if (value) {
-        requestFormData.append(key, value);
-      }
+      if (value) requestFormData.append(key, value);
     });
 
-    const utmSourceValue = getCookieItem('utm_source');
-    if (utmSourceValue) {
-      requestFormData.append('source', utmSourceValue);
-    } else {
-      requestFormData.append('source', '');
-    }
+    return requestFormData;
+  };
 
-    let loanAmount = 0;
-    let loanPeriod = 0;
+  const appendFieldsFromStorage = (formData: FormData, fields: readonly string[]) => {
+    fields.forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value) formData.append(key, value);
+    });
+  };
 
-    const savedCalculations = sessionStorage.getItem('savedCalculations');
-    if (savedCalculations) {
-      try {
-        const parsedLoanData = JSON.parse(savedCalculations);
-        if (parsedLoanData && typeof parsedLoanData === 'object') {
-          if (typeof parsedLoanData.amount === 'number') {
-            loanAmount = parsedLoanData.amount;
-          }
-          if (typeof parsedLoanData.period === 'number') {
-            loanPeriod = parsedLoanData.period;
-          }
-        }
-      } catch (e) {
-        console.error('Ошибка парсинга savedCalculations из sessionStorage:', e);
-      }
-    }
-
-    requestFormData.append('loan_sum', String(loanAmount));
-    requestFormData.append('loan_length', String(loanPeriod));
-
+  const sendApiRequest = async (
+      formData: FormData,
+      endpoint: string,
+      stepNumber: number
+  ) => {
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        body: requestFormData,
-      });
+      const response = await apiClient.post<ApiResponse>(endpoint, formData);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Ошибка HTTP, статус: ${response.status}, ответ: ${errorText}`);
+      const data = response.data;
+      if (data.status !== 'success') {
+        throw new Error(
+            `API вернул ошибку на шаге ${stepNumber}: ${JSON.stringify(data)}`
+        );
       }
 
-      const responseData = await response.json();
-
-      if (responseData.status === 'success' && responseData.lead_id) {
-        setCookie('lead_id', responseData.lead_id, 30);
-        formData.lead_id = responseData.lead_id;
-        return { success: true, message: 'Шаг 1 успешно обработан', lead_id: responseData.lead_id };
-      } else {
-        throw new Error(`Апи вернул ошибку: ${JSON.stringify(responseData)}`);
-      }
-    } catch (error) {
-      console.error('Ошибка в sendStepOneRequest:', error);
-      throw new Error(`Ошибка API на шаге 1: ${error instanceof Error ? error.message : String(error)}`);
+      return data;
+    } catch (err: any) {
+      const message = err.response?.data
+        ? JSON.stringify(err.response.data)
+        : err.message;
+      throw new Error(message);
     }
   };
 
+  // шаг 1
+  const sendStepOneRequest = async () => {
+    const requestFormData = createFormData();
+    appendFieldsFromStorage(requestFormData, userDataFields);
+
+    const responseData = await sendApiRequest(requestFormData, 'new-user', 1);
+
+    if (responseData.lead_id) {
+      setCookie('lead_id', responseData.lead_id, 30);
+      formData.lead_id = responseData.lead_id;
+      return { success: true, message: 'Шаг 1 успешно обработан', lead_id: responseData.lead_id };
+    }
+
+    throw new Error('lead_id не получен от API');
+  };
+
+  // шаг 2
+  const sendStepTwoRequest = async () => {
+    if (!formData.lead_id) {
+      step.value = 1;
+      throw new Error('lead_id отсутствует. Невозможно отправить запрос шага 2.');
+    }
+
+    const requestFormData = createFormData();
+    appendFieldsFromStorage(requestFormData, passDataFields);
+
+    await sendApiRequest(requestFormData, 'add', 2);
+    return { success: true, message: 'Шаг 2 успешно обработан' };
+  };
+
+  // шаг 3
+  const sendStepThreeRequest = async () => {
+    if (!formData.lead_id) {
+      step.value = 1;
+      throw new Error('lead_id отсутствует. Невозможно отправить запрос шага 3.');
+    }
+
+    const requestFormData = createFormData();
+    appendFieldsFromStorage(requestFormData, passDataFields);
+
+    const passportSeriesAndNumber = localStorage.getItem(localStorageKeys.passportSeriesAndNumber) || '';
+    const [passportSeries, passportNumber] = passportSeriesAndNumber.split(' ').filter(Boolean);
+
+    if (passportSeries && passportNumber) {
+      requestFormData.append('passportSeries', passportSeries);
+      requestFormData.append('passportNumber', passportNumber);
+    }
+
+    const passportDepCode = localStorage.getItem(localStorageKeys.passportDepCode);
+    const passportIssueDate = localStorage.getItem(localStorageKeys.passportIssueData);
+
+    if (passportDepCode) requestFormData.append('passportDepCode', passportDepCode);
+    if (passportIssueDate) requestFormData.append('passport_issued_date', passportIssueDate);
+
+    await sendApiRequest(requestFormData, 'add', 3);
+    return { success: true, message: 'Шаг 3 успешно обработан' };
+  };
+
+  // управление шагами
   const handleStepSubmit = async () => {
     isLoading.value = true;
-    let dataToSend: any = {};
 
     try {
-      if (step.value === 1) {
-        await sendStepOneRequest(formData);
-        step.value++;
-      } else if (step.value === 2) {
-        dataToSend = {
-          phone: formData.phone,
-          lastName: formData.lastName,
-          firstName: formData.firstName,
-          patronymic: formData.patronymic,
-          birthdayDate: formData.birthdayDate,
-          email: formData.email,
-          gender: formData.gender,
-          loanAmount: formData.loanAmount,
-          loanPeriod: formData.loanPeriod,
-          lead_id: formData.lead_id,
-        };
-        await simulateApiRequest(dataToSend, 2);
+      const stepHandlers = {
+        1: sendStepOneRequest,
+        2: sendStepTwoRequest,
+        3: sendStepThreeRequest
+      };
 
-        if (hasUtmSource.value) {
+      const handler = stepHandlers[step.value as keyof typeof stepHandlers];
+      if (handler) {
+        await handler();
+
+        if (step.value === 2 && hasUtmSource.value) {
           step.value = 4;
         } else {
           step.value++;
         }
-
-      } else if (step.value === 3) {
-        dataToSend = {
-          phone: formData.phone,
-          lastName: formData.lastName,
-          firstName: formData.firstName,
-          patronymic: formData.patronymic,
-          birthdayDate: formData.birthdayDate,
-          email: formData.email,
-          gender: formData.gender,
-          loanAmount: formData.loanAmount,
-          loanPeriod: formData.loanPeriod,
-          seriesAndNumber: formData.seriesAndNumber,
-          subdivisionCode: formData.subdivisionCode,
-          issueDate: formData.issueDate,
-          lead_id: formData.lead_id,
-        };
-        await simulateApiRequest(dataToSend, 3);
-        step.value++;
       }
     } catch (error) {
-      console.error('Ошибка при отправке данных:', error);
+      console.error('Ошибка при отправке данных,', error);
       alert('Произошла ошибка при отправке данных. Пожалуйста, попробуйте еще раз.');
     } finally {
       isLoading.value = false;
@@ -234,6 +230,31 @@
   const handleVerificationComplete = () => {
     step.value++;
   };
+
+  onMounted(() => {
+    const savedStep = localStorage.getItem(localStorageKeys.step);
+
+    if (savedStep) {
+      const parsedStep = parseInt(savedStep);
+
+      if (parsedStep >= 4) {
+        step.value = hasUtmSource.value ? 2 : 3;
+      } else {
+        step.value = parsedStep;
+      }
+    }
+
+    if (!formData.lead_id) {
+      const savedLeadId = getCookie('lead_id');
+      if (savedLeadId) {
+        formData.lead_id = savedLeadId;
+      }
+    }
+  });
+
+  watch(step, (newStep) => {
+    localStorage.setItem(localStorageKeys.step, String(newStep));
+  });
 </script>
 
 <template>
@@ -246,39 +267,45 @@
     md:rounded-2xl"
   >
     <ApplyProgress
-        v-if="(step <= 2 && hasUtmSource) || step <= 3"
-        :step="step"
+      v-if="shouldShowProgress"
+      :step="step"
     />
+
     <ContactInfo
-        v-if="step === 1"
-        v-model:form-data="formData"
-        :is-loading="isLoading"
-        @submit-step="handleStepSubmit"
+      v-if="currentStepComponent === 'ContactInfo'"
+      v-model:form-data="formData"
+      :is-loading="isLoading"
+      @submit-step="handleStepSubmit"
     />
+
     <UserData
-        v-else-if="step === 2"
-        v-model:form-data="formData"
-        :is-loading="isLoading"
-        @submit-step="handleStepSubmit"
-        @prev-step="handlePrevStep"
+      v-else-if="currentStepComponent === 'UserData'"
+      v-model:form-data="formData"
+      :is-loading="isLoading"
+      @submit-step="handleStepSubmit"
+      @prev-step="handlePrevStep"
     />
+
     <PassData
-        v-else-if="step === 3 && !hasUtmSource"
-        v-model:form-data="formData"
-        :is-loading="isLoading"
-        @submit-step="handleStepSubmit"
-        @prev-step="handlePrevStep"
+      v-else-if="currentStepComponent === 'PassData'"
+      v-model:form-data="formData"
+      :is-loading="isLoading"
+      @submit-step="handleStepSubmit"
+      @prev-step="handlePrevStep"
     />
+
     <DataVerification
-        v-else-if="(step === 3 && hasUtmSource) || step === 4"
-        :lead-id="formData.lead_id"
-        @verification-complete="handleVerificationComplete"
+      v-else-if="currentStepComponent === 'DataVerification'"
+      :lead-id="formData.lead_id"
+      @verification-complete="handleVerificationComplete"
     />
+
     <PaymentForm
-        v-else-if="(step === 4 && hasUtmSource) || step === 5"
-        :loan-amount="formData.loanAmount"
-        :loan-period="formData.loanPeriod"
+      v-else-if="currentStepComponent === 'PaymentForm'"
+      :loan-amount="formData.loanAmount"
+      :loan-period="formData.loanPeriod"
     />
   </div>
-  <RecommendationBlock/>
+
+  <RecommendationBlock />
 </template>

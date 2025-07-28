@@ -14,6 +14,7 @@
     validateGender,
     validateNumeric
   } from '@/utils/validators';
+  import { getLoanData } from '@/utils/common.ts'; // Импортируем вашу функцию
 
   interface StepTwoFormData {
     lastName: string;
@@ -61,8 +62,6 @@
   };
 
   const sessionStorageCalculationsKey = 'savedCalculations';
-  const defaultLoanAmount = 50000;
-  const defaultLoanPeriod = 30;
 
   onMounted(() => {
     let hasLoadedData = false;
@@ -86,24 +85,14 @@
       }
     }
 
-    const savedCalculationsRaw = sessionStorage.getItem(sessionStorageCalculationsKey);
-    let calculations: { amount?: number; period?: number; isWeeklyPeriod?: boolean } = {};
+    const loanData = getLoanData();
+    props.formData.loanAmount = loanData.amount;
+    props.formData.loanPeriod = loanData.period;
 
-    if (savedCalculationsRaw) {
-      try {
-        calculations = JSON.parse(savedCalculationsRaw);
-      } catch (e) {
-        console.error("Не удалось спрасить значения суммы и срока займа из sessionStorage:", e);
-      }
+    const defaultLoanData = getLoanData();
+    if (loanData.amount !== defaultLoanData.amount || loanData.period !== defaultLoanData.period) {
+      hasLoadedData = true;
     }
-
-    const loadedAmount = typeof calculations.amount === 'number' ? calculations.amount : defaultLoanAmount;
-    props.formData.loanAmount = loadedAmount;
-    if (loadedAmount !== defaultLoanAmount) hasLoadedData = true;
-
-    const loadedPeriod = typeof calculations.period === 'number' ? calculations.period : defaultLoanPeriod;
-    props.formData.loanPeriod = loadedPeriod;
-    if (loadedPeriod !== defaultLoanPeriod) hasLoadedData = true;
 
     if (hasLoadedData) {
       emit('update:formData', props.formData);
@@ -123,18 +112,10 @@
       }
     }
 
-    const existingCalculationsRaw = sessionStorage.getItem(sessionStorageCalculationsKey);
-    let currentCalculations: { amount?: number; period?: number; isWeeklyPeriod?: boolean } = {};
-    if (existingCalculationsRaw) {
-      try {
-        currentCalculations = JSON.parse(existingCalculationsRaw);
-      } catch (e) {
-        console.error("Не удалось спрасить значения суммы и срока займа из sessionStorage", e);
-      }
-    }
-
-    currentCalculations.amount = newFormData.loanAmount;
-    currentCalculations.period = newFormData.loanPeriod;
+    const currentCalculations = {
+      amount: newFormData.loanAmount,
+      period: newFormData.loanPeriod
+    };
 
     sessionStorage.setItem(sessionStorageCalculationsKey, JSON.stringify(currentCalculations));
 
@@ -223,7 +204,7 @@
           :error-message="firstNameError"
           @blur="firstNameError = validateRequiredString(props.formData.firstName)"
           @input="clearStringError('first_name')"
-          @wrong-layout="lastNameError = 'Переключите раскладку'"
+          @wrong-layout="firstNameError = 'Переключите раскладку'"
       />
     </div>
     <div class="w-full">
@@ -235,7 +216,7 @@
           :error-message="patronymicError"
           @blur="patronymicError = validateRequiredString(props.formData.patronymic)"
           @input="clearStringError('patronymic')"
-          @wrong-layout="lastNameError = 'Переключите раскладку'"
+          @wrong-layout="patronymicError = 'Переключите раскладку'"
       />
     </div>
   </div>
@@ -268,6 +249,7 @@
           :options="genderOptions"
           name="gender"
           :is-error="!!genderError"
+          @change="genderError = validateGender(props.formData.gender)"
       />
     </div>
   </div>
