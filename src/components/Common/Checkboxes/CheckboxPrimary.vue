@@ -37,15 +37,13 @@ function updateInput(event: Event) {
   }
 }
 
-// TODO фиксани варнинг на диве
-
 </script>
 
 <template>
   <label class="relative pl-8 mb-3 cursor-pointer select-none text-[10px] text-black/30 inline-block w-full">
-    <div class="inline-block align-middle">
+    <span class="inline-block align-middle">
       <slot />
-    </div>
+    </span>
     <input
         type="checkbox"
         :name="name"

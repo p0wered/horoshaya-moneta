@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import { computed, ref, nextTick, watch, onMounted } from 'vue';
+  import { computed, ref, nextTick, watch } from 'vue';
   import { configProxy } from "@/config.ts";
+  import router from "@/router";
   import axios from 'axios'
   import ButtonPrimary from "@/components/Common/Buttons/ButtonPrimary.vue";
   import ButtonSecondary from "@/components/Common/Buttons/ButtonSecondary.vue";
-  import router from "@/router";
   import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
   const recurr_payments_agreement = ref('')
@@ -21,13 +21,12 @@
     last_name: localStorage.getItem('last_name'),
     patronymic: localStorage.getItem('patronymic'),
     phone: localStorage.getItem('phone'),
-    fullName: localStorage.getItem('full_name'),
   };
 
-  const { last_name, first_name, patronymic, fullName: storedFullName } = userCredentials;
+  const { last_name, first_name, patronymic } = userCredentials;
   const fullName = (last_name && first_name && patronymic)
       ? `${last_name} ${first_name} ${patronymic}`
-      : storedFullName;
+      :  localStorage.getItem('full_name');
 
   const props = defineProps({
     show: {
@@ -36,7 +35,7 @@
     }
   });
 
-  const emit = defineEmits(['close', 'accept', 'reject']);
+  const emit = defineEmits(['accept']);
 
   const documentStyles = `
     .info-doc { text-align: right; margin-bottom: 20px; }
@@ -148,11 +147,15 @@
       }
   );
 
-  onMounted(() => {
-    if (props.show) {
-      loadDocuments();
+  watch(
+    () => props.show,
+    (newVal) => {
+      if (newVal) {
+        scrolledToBottom.value = false;
+        loadDocuments();
+      }
     }
-  });
+  );
 </script>
 
 <template>
@@ -176,12 +179,14 @@
       <div class="modal-footer">
         <ButtonSecondary
           class="bg-gray-200 text-black/70 text-[14px] w-full py-4"
+          :is-loading="isLoading"
           @click="router.push('/')"
           label="Отказываюсь"
         />
         <ButtonPrimary
           class="text-[14px]"
           @click="handleAccept"
+          :is-loading="isLoading"
           :label="!scrolledToBottom ? 'Ознакомиться' : 'Принимаю'"
         />
       </div>

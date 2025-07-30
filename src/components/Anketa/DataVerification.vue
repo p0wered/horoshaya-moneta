@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue';
+  import { ref, onMounted, onUnmounted, watch } from 'vue';
 
-  // TODO решить что с этим
-  // const {leadId} = defineProps<{
-  //   leadId: string;
-  // }>();
+  const props = defineProps<{
+    leadId: string;
+    agreementAccepted: boolean;
+  }>();
 
   const emit = defineEmits<{
     (e: 'verification-complete'): void;
@@ -12,15 +12,9 @@
 
   const progressBarValue = ref(0);
   let intervalId: number | null = null;
-  const verificationCompleteKey = 'dataVerificationCompleted';
 
-  onMounted(() => {
-    const wasCompleted = localStorage.getItem(verificationCompleteKey);
-    if (wasCompleted === 'true') {
-      progressBarValue.value = 100;
-      emit('verification-complete');
-      return;
-    }
+  const startProgress = () => {
+    if (intervalId) return;
 
     intervalId = setInterval(() => {
       if (progressBarValue.value < 100) {
@@ -28,27 +22,49 @@
       } else {
         clearInterval(intervalId as number);
         intervalId = null;
-        localStorage.setItem(verificationCompleteKey, 'true');
         emit('verification-complete');
       }
     }, 50);
+  };
+
+  const stopProgress = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  watch(() => props.agreementAccepted, (newValue) => {
+    if (newValue) {
+      startProgress();
+    } else {
+      stopProgress();
+      progressBarValue.value = 0;
+    }
+  });
+
+  onMounted(() => {
+    if (props.agreementAccepted) {
+      startProgress();
+    }
   });
 
   onUnmounted(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
+    stopProgress();
   });
 </script>
 
 <template>
   <div class="flex justify-between items-center mb-2">
     <h4 class="text-xl font-semibold">Проверяем ваши данные</h4>
-    <p class="text-sm text-red">Ожидайте...</p>
+    <p class="text-sm text-red">{{ agreementAccepted ? 'Ожидайте...' : 'Ознакомьтесь с документами' }}</p>
   </div>
 
   <p class="text-black/50 mb-10">
-    Рассмотрение заявки занимает от 10 секунд до 2-х минут. 95% наших клиентов получают одобрение
+    {{ agreementAccepted
+      ? 'Рассмотрение заявки занимает от 10 секунд до 2-х минут. 95% наших клиентов получают одобрение'
+      : 'Для продолжения необходимо ознакомиться и принять соглашения'
+    }}
   </p>
 
   <div class="mb-4">
@@ -60,14 +76,14 @@
     </div>
 
     <div class="flex justify-between">
-      <p>Анализируем и принимаем решение</p>
+      <p>{{ agreementAccepted ? 'Анализируем и принимаем решение' : 'Ожидаем принятия соглашений' }}</p>
       <p>{{ progressBarValue }}%</p>
     </div>
   </div>
 </template>
 
 <style scoped>
- .progress-inner{
-   transition: .1s;
- }
+  .progress-inner{
+    transition: .1s;
+  }
 </style>

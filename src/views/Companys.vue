@@ -219,7 +219,7 @@
       </div>
     </div>
 
-    <div class="container mx-4 md:mx-auto p-4 mt-[-12rem] bg-white md:rounded-3xl shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
+    <div class="max-w-[1300px] mx-4 md:mx-auto p-4 mt-[-12rem] bg-white rounded-3xl shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
       <div v-if="loading" class="min-h-60 flex items-center justify-center">
         <LoadingSpinner color="#f91e45" size="64px"/>
       </div>

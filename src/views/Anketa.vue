@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted, watch, computed } from "vue";
-  import {useUtmSource, setCookie, getCookie, getLoanData} from '@/utils/common.ts';
+  import { useRoute } from "vue-router";
+  import { useUtmSource, setCookie, getCookie, getLoanData } from '@/utils/common.ts';
   import { configProxy } from "@/config.ts";
   import axios from "axios";
   import ApplyProgress from "@/components/Anketa/ApplyProgress.vue";
@@ -10,6 +11,7 @@
   import PassData from "@/components/Anketa/PassData.vue";
   import DataVerification from "@/components/Anketa/DataVerification.vue";
   import PaymentForm from "@/components/Anketa/PaymentForm.vue";
+  import AgreementPopup from "@/components/Anketa/AgreementPopup.vue";
 
   const localStorageKeys = {
     step: 'currentAnketaStep',
@@ -22,9 +24,14 @@
   const passDataFields = [...userDataFields, 'gender'] as const;
   const cookieParams = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6', 'sub7', 'click_id', 'web_id'] as const;
 
+  const route = useRoute();
   const { hasUtmSource } = useUtmSource();
   const isLoading = ref(false);
+  const shortAnketa = ref(false);
   const step = ref(1);
+
+  const showAgreementPopup = ref(false);
+  const agreementAccepted = ref(false);
 
   const formData = reactive({
     phone: '',
@@ -59,7 +66,7 @@
   }
 
   const shouldShowProgress = computed(() =>
-      (step.value <= 2 && hasUtmSource.value) || step.value <= 3
+      ((step.value <= 2 && hasUtmSource.value) || step.value <= 3) && !shortAnketa.value
   );
 
   const currentStepComponent = computed(() => {
@@ -71,8 +78,6 @@
     return null;
   });
 
-  const getCookieItem = (key: string): string => getCookie(key) || '';
-
   const createFormData = (additionalFields: Record<string, string> = {}) => {
     const requestFormData = new FormData();
     const loanData = getLoanData();
@@ -80,10 +85,10 @@
     const baseFields = {
       phone: formData.phone,
       lead_id: formData.lead_id,
-      agreement_time: getCookieItem('agreement_time'),
+      agreement_time: getCookie('agreement_time'),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       timezone_offset: String(-new Date().getTimezoneOffset() / 60),
-      source: getCookieItem('utm_source'),
+      source: getCookie('utm_source'),
       loan_sum: String(loanData.amount),
       loan_length: String(loanData.period),
       ...additionalFields
@@ -94,7 +99,7 @@
     });
 
     cookieParams.forEach(key => {
-      const value = getCookieItem(key);
+      const value = getCookie(key);
       if (value) requestFormData.append(key, value);
     });
 
@@ -131,6 +136,22 @@
       throw new Error(message);
     }
   };
+
+  // симуляция апи запроса для отладки
+  // const simulateApiRequest = () => {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       console.log(`Отправка данных на шаге`);
+  //       const success = Math.random() > 0.1;
+  //
+  //       if (success) {
+  //         resolve({ success: true, message: `Шаг успешно обработан` });
+  //       } else {
+  //         reject(new Error(`Ошибка API`));
+  //       }
+  //     }, 1000);
+  //   });
+  // };
 
   // шаг 1
   const sendStepOneRequest = async () => {
@@ -205,7 +226,7 @@
       if (handler) {
         await handler();
 
-        if (step.value === 2 && hasUtmSource.value) {
+        if (step.value === 2 && hasUtmSource.value || step.value === 1 && shortAnketa.value) {
           step.value = 4;
         } else {
           step.value++;
@@ -231,6 +252,11 @@
     step.value++;
   };
 
+  const handleAgreementAccept = () => {
+    agreementAccepted.value = true;
+    showAgreementPopup.value = false;
+  };
+
   onMounted(() => {
     const savedStep = localStorage.getItem(localStorageKeys.step);
 
@@ -250,10 +276,21 @@
         formData.lead_id = savedLeadId;
       }
     }
+
+    shortAnketa.value = (route.query.phone !== '' || !!localStorage.getItem('phone')) && hasUtmSource.value;
+    if (shortAnketa.value) {
+      step.value = 1;
+    }
   });
 
   watch(step, (newStep) => {
     localStorage.setItem(localStorageKeys.step, String(newStep));
+
+    const isDataVerificationStep = currentStepComponent.value === 'DataVerification';
+    const shouldShowAgreement = isDataVerificationStep && !hasUtmSource.value;
+
+    showAgreementPopup.value = shouldShowAgreement;
+    agreementAccepted.value = !shouldShowAgreement;
   });
 </script>
 
@@ -297,6 +334,7 @@
     <DataVerification
       v-else-if="currentStepComponent === 'DataVerification'"
       :lead-id="formData.lead_id"
+      :agreement-accepted="agreementAccepted"
       @verification-complete="handleVerificationComplete"
     />
 
@@ -306,6 +344,12 @@
       :loan-period="formData.loanPeriod"
     />
   </div>
+
+  <AgreementPopup
+    :show="showAgreementPopup"
+    @accept="handleAgreementAccept"
+    @reject="() => showAgreementPopup = false"
+  />
 
   <RecommendationBlock />
 </template>

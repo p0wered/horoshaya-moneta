@@ -7,9 +7,6 @@
   import PageLoading from "@/components/PageLoading.vue";
   import SubscriptionPopup from "@/components/SubscriptionPopup.vue";
 
-  //TODO short anketa
-  //TODO agreement popup
-
   const route = useRoute();
   const router = useRouter();
   const { hasUtmSource } = useUtmSource();
