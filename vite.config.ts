@@ -9,6 +9,17 @@ export default defineConfig({
     vue(),
     tailwindcss()
   ],
+  base: '/sites/horoshaya-moneta/',
+  build: {
+    manifest: true,
+    target: [
+      'esnext',
+      'chrome100',
+      'edge100',
+      'firefox100',
+      'safari15'
+    ]
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
