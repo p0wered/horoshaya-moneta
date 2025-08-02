@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { useAutoDocs } from "@/utils/auto-docs.ts";
+  import { onBeforeUnmount, onMounted } from "vue";
   import {
     CreditCard,
     FileText,
@@ -10,7 +12,14 @@
     Phone,
     Mail
   } from 'lucide-vue-next'
-  import {useAutoDocs} from "@/utils/auto-docs.ts";
+
+  onMounted(() => {
+    document.body.style.overflow = 'hidden';
+  });
+
+  onBeforeUnmount(() => {
+    document.body.style.overflow = '';
+  });
 
   const emit = defineEmits(['close'])
 
