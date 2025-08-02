@@ -1,44 +1,36 @@
 <script setup lang="ts">
-import {
-  X,
-  CreditCard,
-  FileText,
-  MapPin,
-  Shield,
-  AlertTriangle,
-  Folder,
-  CheckCircle,
-  Phone,
-  Mail
-} from 'lucide-vue-next'
-import {useAutoDocs} from "@/utils/auto-docs.ts";
+  import {
+    CreditCard,
+    FileText,
+    MapPin,
+    Shield,
+    AlertTriangle,
+    Folder,
+    CheckCircle,
+    Phone,
+    Mail
+  } from 'lucide-vue-next'
+  import {useAutoDocs} from "@/utils/auto-docs.ts";
 
-const emit = defineEmits(['close'])
+  const emit = defineEmits(['close'])
 
-const {
-  publicOfertaPdf,
-  personalDataPoliticPdf,
-  personalDataAgreementPdf,
-  paidSubAgreementPdf,
-  recurrPaymentsAgreementPdf,
-  cardDataAgreementPdf,
-} = useAutoDocs()
+  const {
+    publicOfertaPdf,
+    personalDataPoliticPdf,
+    personalDataAgreementPdf,
+    paidSubAgreementPdf,
+    recurrPaymentsAgreementPdf,
+    cardDataAgreementPdf,
+  } = useAutoDocs()
 </script>
 
 <template>
   <div class="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 md:p-6">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-md"/>
     <div
-        class="relative w-full max-w-4xl max-h-[95vh] bg-white rounded-3xl shadow-2xl border border-stone-200/50 overflow-hidden"
+        class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-stone-200/50 overflow-hidden"
     >
-      <button
-          @click="$emit('close')"
-          class="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 p-2 sm:p-3 rounded-full bg-stone-100 hover:bg-stone-200 transition-all duration-200 group"
-      >
-        <X class="w-5 h-5 sm:w-6 sm:h-6 text-stone-600 group-hover:text-stone-800"/>
-      </button>
-
-      <div class="max-h-[95vh] overflow-y-auto">
+      <div class="max-h-[95dvh] overflow-y-auto">
         <div class="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
           <div class="text-center space-y-4 sm:space-y-6">
             <div class="flex items-center justify-center gap-3 sm:gap-4">
@@ -137,14 +129,14 @@ const {
                   </p>
                   <div class="flex flex-col sm:flex-row gap-3">
                     <a
-                      :href="$config.phoneNumber"
+                      :href="'tel:' + $config.phoneNumber"
                       class="inline-flex items-center gap-2 px-4 py-3 bg-white border border-green-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-200 text-sm sm:text-base font-medium text-green-700"
                     >
                       <Phone class="w-4 h-4"/>
                       {{ $config.phoneNumber }}
                     </a>
                     <a
-                      :href="$config.email"
+                      :href="'mailto:' + $config.email"
                       class="inline-flex items-center gap-2 px-4 py-3 bg-white border border-green-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-200 text-sm sm:text-base font-medium text-green-700"
                     >
                       <Mail class="w-4 h-4"/>
@@ -227,8 +219,8 @@ const {
           </div>
 
           <button
-              @click="$emit('close')"
-              class="accept-btn cursor-pointer w-full bg-red text-white font-semibold py-5 sm:py-6 px-4 sm:px-8 rounded-2xl text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+            @click="$emit('close')"
+            class="accept-btn cursor-pointer w-full bg-red text-white font-semibold py-5 sm:py-6 px-4 sm:px-8 rounded-2xl text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <CheckCircle class="w-6 h-6 sm:w-7 sm:h-7 hidden md:block"/>
             <span class="leading-tight">
